@@ -108,6 +108,9 @@ namespace eae6320
 			// (a derived class can call this explicitly when it determines the application should exit)
 			cResult Exit( const int i_exitCode );
 
+			//time rate
+			void SetTimeRate(const float rate);
+
 			// Initialize / Clean Up
 			//----------------------
 

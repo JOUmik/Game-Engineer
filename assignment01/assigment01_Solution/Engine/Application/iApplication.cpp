@@ -271,6 +271,13 @@ void eae6320::Application::iApplication::EntryPoint_applicationLoopThread( void*
 	return application->UpdateUntilExit();
 }
 
+
+//Set the time rate
+void eae6320::Application::iApplication::SetTimeRate(const float rate)
+{
+	m_simulationRate = rate;
+}
+
 // Initialize / Clean Up
 //----------------------
 

@@ -21,6 +21,20 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 		const auto result = Exit( EXIT_SUCCESS );
 		EAE6320_ASSERT( result );
 	}
+
+	// If the user press space, slow the time
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
+	{
+		//slow the time
+		SetTimeRate(0.2f);
+	}
+
+	// If the user release space, restore the time
+	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
+	{
+		//restore the time
+		SetTimeRate(1.0f);
+	}
 }
 
 // Initialize / Clean Up
