@@ -27,7 +27,7 @@ namespace
 		WNDPROC fOnMessageReceivedFromWindows, ATOM& o_mainWindowClass,
 		const WORD* const i_iconId_large = nullptr, const WORD* const i_iconId_small = nullptr );
 	eae6320::cResult FreeMainWindow( HWND& io_window );
-	eae6320::cResult FreeMainWindowClass( const HINSTANCE i_thisInstanceOfTheApplication, ATOM& io_mainWindowClass );
+	eae6320::cResult FreeMainWindowClass( const HINSTANCE i_thisInstanceOfTheApplication, ATOM& io_mainWindowClass, const char* const i_windowName);
 }
 
 // Interface
@@ -356,7 +356,7 @@ eae6320::cResult eae6320::Application::iApplication::CleanUp_base()
 	// Main Window Class
 	if ( m_mainWindowClass )
 	{
-		const auto result_freeMainWindowClass = FreeMainWindowClass( m_thisInstanceOfTheApplication, m_mainWindowClass );
+		const auto result_freeMainWindowClass = FreeMainWindowClass( m_thisInstanceOfTheApplication, m_mainWindowClass, GetMainWindowClassName());
 		if ( !result_freeMainWindowClass )
 		{
 			if ( result )
@@ -607,11 +607,11 @@ namespace
 		}
 	}
 
-	eae6320::cResult FreeMainWindowClass( const HINSTANCE i_thisInstanceOfTheApplication, ATOM& io_mainWindowClass  )
+	eae6320::cResult FreeMainWindowClass( const HINSTANCE i_thisInstanceOfTheApplication, ATOM& io_mainWindowClass, const char* const i_windowName)
 	{
 		if ( UnregisterClassW( MAKEINTATOM( io_mainWindowClass ), i_thisInstanceOfTheApplication ) != FALSE )
 		{
-			eae6320::Logging::OutputMessage( "Unregistered main window class" );
+			eae6320::Logging::OutputMessage( "Unregistered main window class \"%s\"", i_windowName);
 			io_mainWindowClass = NULL;
 			return eae6320::Results::Success;
 		}

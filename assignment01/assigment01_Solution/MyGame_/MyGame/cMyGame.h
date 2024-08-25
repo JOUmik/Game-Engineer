@@ -57,7 +57,7 @@ namespace eae6320
 		// You don't need to worry about this for our class,
 		// but if you ever ship a real project using this code as a base you should set this to something unique
 		// (a generated GUID would be fine since this string is never seen)
-		const char* GetMainWindowClassName() const final { return "John-Paul's EAE6320 Example Main Window Class"; }
+		const char* GetMainWindowClassName() const final { return "Yan's Game Window Class"; }
 		// The following three icons are provided:
 		//	* IDI_EAEGAMEPAD
 		//	* IDI_EAEALIEN
