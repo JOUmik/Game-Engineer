@@ -9,6 +9,7 @@
 #include "../sContext.h"
 #include "../VertexFormats.h"
 #include "../Mesh.h"
+#include "../Effect.h"
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Concurrency/cEvent.h>
@@ -66,11 +67,7 @@ namespace
 
 	// Shading Data
 	//-------------
-
-	eae6320::Graphics::cShader* s_vertexShader = nullptr;
-	eae6320::Graphics::cShader* s_fragmentShader = nullptr;
-
-	eae6320::Graphics::cRenderState s_renderState;
+	eae6320::Graphics::Effect effect;
 }
 
 // Helper Declarations
@@ -78,7 +75,6 @@ namespace
 
 namespace
 {
-	eae6320::cResult InitializeShadingData();
 	eae6320::cResult InitializeViews( const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight );
 }
 
@@ -174,24 +170,7 @@ void eae6320::Graphics::RenderFrame()
 
 	// Bind the shading data
 	{
-		{
-			constexpr ID3D11ClassInstance* const* noInterfaces = nullptr;
-			constexpr unsigned int interfaceCount = 0;
-			// Vertex shader
-			{
-				EAE6320_ASSERT( ( s_vertexShader != nullptr ) && ( s_vertexShader->m_shaderObject.vertex != nullptr ) );
-				direct3dImmediateContext->VSSetShader( s_vertexShader->m_shaderObject.vertex, noInterfaces, interfaceCount );
-			}
-			// Fragment shader
-			{
-				EAE6320_ASSERT( ( s_fragmentShader != nullptr ) && ( s_fragmentShader->m_shaderObject.vertex != nullptr ) );
-				direct3dImmediateContext->PSSetShader( s_fragmentShader->m_shaderObject.fragment, noInterfaces, interfaceCount );
-			}
-		}
-		// Render state
-		{
-			s_renderState.Bind();
-		}
+		effect.BindShadingData(direct3dImmediateContext);
 	}
 	// Draw the geometry
 	{
@@ -272,7 +251,7 @@ eae6320::cResult eae6320::Graphics::Initialize( const sInitializationParameters&
 	}
 	// Initialize the shading data
 	{
-		if ( !( result = InitializeShadingData() ) )
+		if ( !( result = effect.InitializeShadingData() ) )
 		{
 			EAE6320_ASSERTF( false, "Can't initialize Graphics without the shading data" );
 			return result;
@@ -306,16 +285,7 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	}
 	mesh.CleanUp();
 
-	if ( s_vertexShader )
-	{
-		s_vertexShader->DecrementReferenceCount();
-		s_vertexShader = nullptr;
-	}
-	if ( s_fragmentShader )
-	{
-		s_fragmentShader->DecrementReferenceCount();
-		s_fragmentShader = nullptr;
-	}
+	effect.CleanUp();
 
 	{
 		const auto result_constantBuffer_frame = s_constantBuffer_frame.CleanUp();
@@ -349,45 +319,6 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 namespace
 {
-
-	eae6320::cResult InitializeShadingData()
-	{
-		auto result = eae6320::Results::Success;
-
-		if ( !( result = eae6320::Graphics::cShader::Load( "data/Shaders/Vertex/standard.shader",
-			s_vertexShader, eae6320::Graphics::eShaderType::Vertex ) ) )
-		{
-			EAE6320_ASSERTF( false, "Can't initialize shading data without vertex shader" );
-			return result;
-		}
-		if ( !( result = eae6320::Graphics::cShader::Load( "data/Shaders/Fragment/animatedColor.shader",
-			s_fragmentShader, eae6320::Graphics::eShaderType::Fragment ) ) )
-		{
-			EAE6320_ASSERTF( false, "Can't initialize shading data without fragment shader" );
-			return result;
-		}
-		{
-			constexpr auto renderStateBits = []
-			{
-				uint8_t renderStateBits = 0;
-
-				eae6320::Graphics::RenderStates::DisableAlphaTransparency( renderStateBits );
-				eae6320::Graphics::RenderStates::DisableDepthTesting( renderStateBits );
-				eae6320::Graphics::RenderStates::DisableDepthWriting( renderStateBits );
-				eae6320::Graphics::RenderStates::DisableDrawingBothTriangleSides( renderStateBits );
-
-				return renderStateBits;
-			}();
-			if ( !( result = s_renderState.Initialize( renderStateBits ) ) )
-			{
-				EAE6320_ASSERTF( false, "Can't initialize shading data without render state" );
-				return result;
-			}
-		}
-
-		return result;
-	}
-
 	eae6320::cResult InitializeViews( const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight )
 	{
 		auto result = eae6320::Results::Success;

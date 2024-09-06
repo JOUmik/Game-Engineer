@@ -1,5 +1,4 @@
 #pragma once
-#include "Graphics.h"
 #include "cVertexFormat.h"
 
 #ifdef EAE6320_PLATFORM_D3D

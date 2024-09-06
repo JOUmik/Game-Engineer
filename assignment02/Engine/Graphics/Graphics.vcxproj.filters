@@ -63,6 +63,9 @@
     <ClInclude Include="Mesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cConstantBuffer.cpp">
@@ -120,6 +123,15 @@
       <Filter>Direct3D</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL\Mesh.gl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Direct3D\Effect.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\Effect.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
