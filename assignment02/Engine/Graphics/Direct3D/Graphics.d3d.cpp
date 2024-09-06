@@ -418,19 +418,6 @@ namespace
 			eae6320::Graphics::VertexFormats::sVertex_mesh vertexData[vertexCount];
 			{
 				// Direct3D is left-handed
-
-				vertexData[0].x = 0.0f;
-				vertexData[0].y = 0.0f;
-				vertexData[0].z = 0.0f;
-
-				vertexData[1].x = 1.0f;
-				vertexData[1].y = 1.0f;
-				vertexData[1].z = 0.0f;
-
-				vertexData[2].x = 1.0f;
-				vertexData[2].y = 0.0f;
-				vertexData[2].z = 0.0f;
-
 				vertexData[0].x = -0.4f;
 				vertexData[0].y = -0.5f;
 				vertexData[0].z = 0.0f;
