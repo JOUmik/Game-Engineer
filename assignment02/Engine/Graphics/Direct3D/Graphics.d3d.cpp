@@ -170,11 +170,11 @@ void eae6320::Graphics::RenderFrame()
 
 	// Bind the shading data
 	{
-		effect.BindShadingData(direct3dImmediateContext);
+		effect.BindShadingData();
 	}
 	// Draw the geometry
 	{
-		mesh.Draw(direct3dImmediateContext);
+		mesh.Draw();
 	}
 
 	// Everything has been drawn to the "back buffer", which is just an image in memory.

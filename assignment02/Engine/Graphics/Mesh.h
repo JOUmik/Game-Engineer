@@ -34,13 +34,8 @@ namespace eae6320
             Mesh();
             ~Mesh();
             eae6320::cResult InitializeGeometry();
-#ifdef EAE6320_PLATFORM_D3D
-            void Draw(ID3D11DeviceContext* const& direct3dImmediateContext);
-            void CleanUp();
-#elif EAE6320_PLATFORM_GL
             void Draw();
-            void CleanUp(cResult& result);
-#endif
+            cResult CleanUp();
         };
     }
 }

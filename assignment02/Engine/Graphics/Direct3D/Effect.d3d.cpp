@@ -1,12 +1,16 @@
 #include "../Effect.h"
 #include "../cShader.h"
+#include "../sContext.h"
 
 namespace eae6320
 {
     namespace Graphics
     {
-        void Effect::BindShadingData(ID3D11DeviceContext* const& direct3dImmediateContext)
+        void Effect::BindShadingData()
         {
+			auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
+			EAE6320_ASSERT(direct3dImmediateContext);
+
 			{
 				constexpr ID3D11ClassInstance* const* noInterfaces = nullptr;
 				constexpr unsigned int interfaceCount = 0;
@@ -27,7 +31,7 @@ namespace eae6320
 			}
         }
 
-		void Effect::CleanUp() 
+		cResult Effect::CleanUp() 
 		{
 			if (s_vertexShader)
 			{
@@ -39,6 +43,8 @@ namespace eae6320
 				s_fragmentShader->DecrementReferenceCount();
 				s_fragmentShader = nullptr;
 			}
+
+			return Results::Success;
 		}
     }
 }

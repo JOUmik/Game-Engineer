@@ -27,14 +27,9 @@ namespace eae6320
 
             //functions
             //---------
-#ifdef EAE6320_PLATFORM_D3D
-            void BindShadingData(ID3D11DeviceContext* const& direct3dImmediateContext);
-            void CleanUp();
-#elif EAE6320_PLATFORM_GL
             void BindShadingData();
-            void CleanUp(cResult& result);
-#endif
-            eae6320::cResult InitializeShadingData();
+            cResult CleanUp();
+            cResult InitializeShadingData();
         };
     }
 }

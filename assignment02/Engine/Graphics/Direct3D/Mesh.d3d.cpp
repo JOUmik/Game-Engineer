@@ -12,7 +12,7 @@ namespace eae6320
 		Mesh::Mesh() {}
 		Mesh::~Mesh() {}
 
-		eae6320::cResult Mesh::InitializeGeometry()
+		cResult Mesh::InitializeGeometry()
 		{
 			auto result = eae6320::Results::Success;
 
@@ -111,8 +111,11 @@ namespace eae6320
 			return result;
 		}
 
-		void Mesh::Draw(ID3D11DeviceContext* const& direct3dImmediateContext) 
+		void Mesh::Draw() 
 		{
+			auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
+			EAE6320_ASSERT(direct3dImmediateContext);
+
 			// Bind a specific vertex buffer to the device as a data source
 			{
 				EAE6320_ASSERT(s_vertexBuffer != nullptr);
@@ -149,7 +152,7 @@ namespace eae6320
 			}
 		}
 
-        void Mesh::CleanUp() 
+        cResult Mesh::CleanUp() 
 		{
 			if (s_vertexBuffer)
 			{
@@ -161,6 +164,8 @@ namespace eae6320
 				s_vertexFormat->DecrementReferenceCount();
 				s_vertexFormat = nullptr;
 			}
+
+			return Results::Success;
         }
 
 

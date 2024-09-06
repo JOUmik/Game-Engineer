@@ -20,8 +20,10 @@ namespace eae6320
 			}
 		}
 
-		void Effect::CleanUp(cResult& result)
+		cResult Effect::CleanUp()
 		{
+			auto result = Results::Success;
+
 			if (s_programId != 0)
 			{
 				glDeleteProgram(s_programId);
@@ -49,6 +51,8 @@ namespace eae6320
 				s_fragmentShader->DecrementReferenceCount();
 				s_fragmentShader = nullptr;
 			}
+
+			return result;
 		}
     }
 }

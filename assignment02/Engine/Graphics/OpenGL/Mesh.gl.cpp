@@ -198,8 +198,10 @@ namespace eae6320
 			}
 		}
 
-		void Mesh::CleanUp(cResult& result)
+		cResult Mesh::CleanUp()
 		{
+			auto result = Results::Success;
+
 			if (s_vertexArrayId != 0)
 			{
 				// Make sure that the vertex array isn't bound
@@ -250,6 +252,8 @@ namespace eae6320
 				}
 				s_vertexBufferId = 0;
 			}
+
+			return result;
 		}
     }
 }
