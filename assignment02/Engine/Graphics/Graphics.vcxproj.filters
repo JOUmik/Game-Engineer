@@ -60,6 +60,9 @@
     <ClInclude Include="Windows\ExternalLibraries.win.h">
       <Filter>Windows</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cConstantBuffer.cpp">
@@ -111,6 +114,12 @@
       <Filter>OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL\sContext.gl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Direct3D\Mesh.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\Mesh.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
