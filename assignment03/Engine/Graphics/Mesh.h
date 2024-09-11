@@ -22,6 +22,8 @@ namespace eae6320
 
             // A vertex buffer holds the data for each vertex
             ID3D11Buffer* s_vertexBuffer = nullptr;
+            // A index buffer holds the relationship of triangles and vertexes
+            ID3D11Buffer* s_indexBuffer = nullptr;
 #elif EAE6320_PLATFORM_GL
             // A vertex buffer holds the data for each vertex
             GLuint s_vertexBufferId = 0;
