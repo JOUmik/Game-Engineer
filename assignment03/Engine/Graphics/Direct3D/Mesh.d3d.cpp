@@ -110,7 +110,7 @@ namespace eae6320
 
 			// Index Buffer
 			{
-				constexpr unsigned int indexData[] =
+				constexpr uint16_t indexData[] =
 				{
 					0, 1, 2,
 					3, 4, 5,
@@ -187,7 +187,7 @@ namespace eae6320
 			// Bind Index Buffer
 			{
 				EAE6320_ASSERT(s_indexBuffer);
-				constexpr DXGI_FORMAT indexFormat = DXGI_FORMAT_R32_UINT;
+				constexpr DXGI_FORMAT indexFormat = DXGI_FORMAT_R16_UINT;
 				// The indices start at the beginning of the buffer
 				constexpr unsigned int offset = 0;
 				direct3dImmediateContext->IASetIndexBuffer(s_indexBuffer, indexFormat, offset);

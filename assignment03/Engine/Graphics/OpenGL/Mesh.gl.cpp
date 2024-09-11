@@ -129,6 +129,57 @@ namespace eae6320
 					return result;
 				}
 			}
+			// Create an index buffer object and make it active
+			{
+				constexpr GLsizei bufferCount = 1;
+				glGenBuffers(bufferCount, &s_indexBufferId);
+				const auto errorCode = glGetError();
+				if (errorCode == GL_NO_ERROR)
+				{
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s_indexBufferId);
+					const auto errorCode = glGetError();
+					if (errorCode != GL_NO_ERROR)
+					{
+						result = Results::Failure;
+						EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+						Logging::OutputError("OpenGL failed to bind a new index buffer: %s",
+							reinterpret_cast<const char*>(gluErrorString(errorCode)));
+						return result;
+					}
+				}
+				else
+				{
+					result = Results::Failure;
+					EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					Logging::OutputError("OpenGL failed to get an unused index buffer ID: %s",
+						reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					return result;
+				}
+			}
+			// Assign the data to the buffer
+			{
+				uint16_t indexData[] =
+				{
+					0, 1, 2,
+					3, 4, 5,
+					6, 7, 8
+				};
+				constexpr auto indexCount = sizeof(indexData) / sizeof(indexData[0]);
+				constexpr auto bufferSize = sizeof(indexData[0]) * indexCount;
+				EAE6320_ASSERT(bufferSize <= std::numeric_limits<GLsizeiptr>::max());
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(indexData),
+					// In our class we won't ever read from the buffer
+					GL_STATIC_DRAW);
+				const auto errorCode = glGetError();
+				if (errorCode != GL_NO_ERROR)
+				{
+					result = Results::Failure;
+					EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					Logging::OutputError("OpenGL failed to allocate the index buffer: %s",
+						reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					return result;
+				}
+			}
 			// Initialize vertex format
 			{
 				// The "stride" defines how large a single vertex is in the stream of data
@@ -180,20 +231,18 @@ namespace eae6320
 				glBindVertexArray(s_vertexArrayId);
 				EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
 			}
-			// Render triangles from the currently-bound vertex buffer
+			// Render triangles from the index buffer
 			{
 				// The mode defines how to interpret multiple vertices as a single "primitive";
+				constexpr unsigned int triangleCount = 3;
+				constexpr unsigned int vertexCountPerTriangle = 3;
+				constexpr auto indexCountToRender = triangleCount * vertexCountPerTriangle;
 				// a triangle list is defined
 				// (meaning that every primitive is a triangle and will be defined by three vertices)
 				constexpr GLenum mode = GL_TRIANGLES;
-				// As of this comment only a single triangle is drawn
-				// (you will have to update this code in future assignments!)
-				constexpr unsigned int triangleCount = 3;
-				constexpr unsigned int vertexCountPerTriangle = 3;
-				constexpr auto vertexCountToRender = triangleCount * vertexCountPerTriangle;
 				// It's possible to start rendering primitives in the middle of the stream
-				constexpr unsigned int indexOfFirstVertexToRender = 0;
-				glDrawArrays(mode, indexOfFirstVertexToRender, vertexCountToRender);
+				const GLvoid* const offset = 0;
+				glDrawElements(mode, static_cast<GLsizei>(indexCountToRender), GL_UNSIGNED_SHORT, offset);
 				EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
 			}
 		}
@@ -251,6 +300,23 @@ namespace eae6320
 						reinterpret_cast<const char*>(gluErrorString(errorCode)));
 				}
 				s_vertexBufferId = 0;
+			}
+			if (s_indexBufferId != 0)
+			{
+				constexpr GLsizei bufferCount = 1;
+				glDeleteBuffers(bufferCount, &s_indexBufferId);
+				const auto errorCode = glGetError();
+				if (errorCode != GL_NO_ERROR)
+				{
+					if (result)
+					{
+						result = Results::Failure;
+					}
+					EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					Logging::OutputError("OpenGL failed to delete the index buffer: %s",
+						reinterpret_cast<const char*>(gluErrorString(errorCode)));
+				}
+				s_indexBufferId = 0;
 			}
 
 			return result;

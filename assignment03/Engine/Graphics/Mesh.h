@@ -27,6 +27,8 @@ namespace eae6320
 #elif EAE6320_PLATFORM_GL
             // A vertex buffer holds the data for each vertex
             GLuint s_vertexBufferId = 0;
+            // An index buffer holds the data for each index
+            GLuint s_indexBufferId = 0;
             // A vertex array encapsulates the vertex data as well as the vertex input layout
             GLuint s_vertexArrayId = 0;
 #endif
