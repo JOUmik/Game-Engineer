@@ -11,6 +11,7 @@
 #include "Configuration.h"
 
 #include <cstdint>
+#include <string>
 #include <Engine/Results/Results.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
@@ -65,6 +66,10 @@ namespace eae6320
 			HINSTANCE thisInstanceOfTheApplication = NULL;
 	#endif
 #endif
+			const std::string vertexShaderPath;
+			const std::string fragmentShaderPath;
+
+			sInitializationParameters(const std::string i_vertexShaderPath, const std::string i_fragmentShaderPath) : vertexShaderPath(i_vertexShaderPath), fragmentShaderPath(i_fragmentShaderPath) {}
 		};
 
 		cResult Initialize( const sInitializationParameters& i_initializationParameters );

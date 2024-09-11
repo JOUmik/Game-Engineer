@@ -1,5 +1,6 @@
 #include "Effect.h"
 #include "cShader.h"
+#include "Graphics.h"
 
 #include <Engine/Logging/Logging.h>
 #include <Engine/ScopeGuard/cScopeGuard.h>
@@ -8,17 +9,17 @@ namespace eae6320
 {
     namespace Graphics
     {
-		eae6320::cResult Effect::InitializeShadingData() 
+		eae6320::cResult Effect::InitializeShadingData(const sInitializationParameters& i_initializationParameters)
 		{
 			auto result = eae6320::Results::Success;
 
-			if (!(result = eae6320::Graphics::cShader::Load("data/Shaders/Vertex/standard.shader",
+			if (!(result = eae6320::Graphics::cShader::Load(i_initializationParameters.vertexShaderPath,
 				s_vertexShader, eae6320::Graphics::eShaderType::Vertex)))
 			{
 				EAE6320_ASSERTF(false, "Can't initialize shading data without vertex shader");
 				return result;
 			}
-			if (!(result = eae6320::Graphics::cShader::Load("data/Shaders/Fragment/animatedColor.shader",
+			if (!(result = eae6320::Graphics::cShader::Load(i_initializationParameters.fragmentShaderPath,
 				s_fragmentShader, eae6320::Graphics::eShaderType::Fragment)))
 			{
 				EAE6320_ASSERTF(false, "Can't initialize shading data without fragment shader");

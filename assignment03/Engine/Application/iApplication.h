@@ -12,6 +12,7 @@
 //=========
 
 #include <cstdint>
+#include <string>
 #include <Engine/Concurrency/cThread.h>
 #include <Engine/Results/Results.h>
 
@@ -47,7 +48,7 @@ namespace eae6320
 			template<class tApplication>
 		int Run(
 #if defined( EAE6320_PLATFORM_WINDOWS )
-			 const HINSTANCE i_thisInstanceOfTheApplication, const char* const i_commandLineArguments, const int i_initialWindowDisplayState
+			 const HINSTANCE i_thisInstanceOfTheApplication, const char* const i_commandLineArguments, const int i_initialWindowDisplayState, const std::string& i_vertexShaderPath, const std::string& i_fragmentShaderPath
 #endif
 		)
 		{
@@ -56,7 +57,7 @@ namespace eae6320
 			tApplication::sEntryPointParameters entryPointParameters =
 			{
 #if defined( EAE6320_PLATFORM_WINDOWS )
-				i_thisInstanceOfTheApplication, i_commandLineArguments, i_initialWindowDisplayState
+				i_thisInstanceOfTheApplication, i_commandLineArguments, i_initialWindowDisplayState, i_vertexShaderPath, i_fragmentShaderPath
 #endif
 			};
 			// Create an instance of the applciation
@@ -85,6 +86,9 @@ namespace eae6320
 				// The requested initial state of the window
 				// (e.g. minimized, maximized, etc.)
 				const int initialWindowDisplayState = SW_SHOWNORMAL;
+				//The required shaders for the game
+				const std::string vertexShader = "";
+				const std::string fragmentShader = "";
 #endif
 			};
 
@@ -261,15 +265,15 @@ namespace eae6320
 			//----------------------
 
 			cResult Initialize_all( const sEntryPointParameters& i_entryPointParameters );	// This initializes everything
-				cResult Initialize_base( const sEntryPointParameters& i_entryPointParameters );	// This initializes just this base class
-				cResult Initialize_engine();	// This initializes all of the engine systems
+			cResult Initialize_base( const sEntryPointParameters& i_entryPointParameters );	// This initializes just this base class
+			cResult Initialize_engine(const sEntryPointParameters& i_entryPointParameters);	// This initializes all of the engine systems
 
 			cResult PopulateGraphicsInitializationParameters( Graphics::sInitializationParameters& o_initializationParameters );
 			cResult PopulateUserOutputInitializationParameters( UserOutput::sInitializationParameters& o_initializationParameters );
 
 			cResult CleanUp_all();	// This cleans up everything
-				cResult CleanUp_base();	// This cleans up just this base class
-				cResult CleanUp_engine();	// This cleans up all of the engine systems
+			cResult CleanUp_base();	// This cleans up just this base class
+			cResult CleanUp_engine();	// This cleans up all of the engine systems
 
 			// #include the platform-specific class declarations
 #if defined( EAE6320_PLATFORM_WINDOWS )

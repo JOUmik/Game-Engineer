@@ -11,6 +11,7 @@ namespace eae6320
 {
     namespace Graphics
     {
+        struct sInitializationParameters;
         class cShader;
         class Effect 
         {
@@ -30,7 +31,7 @@ namespace eae6320
             //---------
             void BindShadingData();
             cResult CleanUp();
-            cResult InitializeShadingData();
+            cResult InitializeShadingData(const sInitializationParameters& i_initializationParameters);
         };
     }
 }

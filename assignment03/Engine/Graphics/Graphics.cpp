@@ -207,7 +207,7 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the shading data
 	{
-		if (!(result = effect.InitializeShadingData()))
+		if (!(result = effect.InitializeShadingData(i_initializationParameters)))
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
 			return result;

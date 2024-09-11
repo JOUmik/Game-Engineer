@@ -307,7 +307,7 @@ eae6320::cResult eae6320::Application::iApplication::Initialize_all( const sEntr
 		return result;
 	}
 	// Initialize engine systems
-	if ( !( result = Initialize_engine() ) )
+	if ( !( result = Initialize_engine( i_entryPointParameters ) ) )
 	{
 		return result;
 	}
@@ -329,7 +329,7 @@ eae6320::cResult eae6320::Application::iApplication::Initialize_all( const sEntr
 	return result;
 }
 
-eae6320::cResult eae6320::Application::iApplication::Initialize_engine()
+eae6320::cResult eae6320::Application::iApplication::Initialize_engine(const sEntryPointParameters& i_entryPointParameters)
 {
 	auto result = Results::Success;
 
@@ -352,7 +352,7 @@ eae6320::cResult eae6320::Application::iApplication::Initialize_engine()
 	}
 	// Graphics
 	{
-		Graphics::sInitializationParameters initializationParameters;
+		Graphics::sInitializationParameters initializationParameters(i_entryPointParameters.vertexShader, i_entryPointParameters.fragmentShader);
 		if ( result = PopulateGraphicsInitializationParameters( initializationParameters ) )
 		{
 			if ( !( result = Graphics::Initialize( initializationParameters ) ) )
