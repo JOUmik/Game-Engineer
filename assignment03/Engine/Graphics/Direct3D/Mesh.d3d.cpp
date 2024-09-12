@@ -112,9 +112,9 @@ namespace eae6320
 			{
 				constexpr uint16_t indexData[] =
 				{
-					0, 1, 2,
-					3, 4, 5,
-					6, 7, 8	
+					0, 2, 1,
+					3, 5, 4,
+					6, 8, 7	
 				};
 				constexpr auto indexCount = sizeof(indexData) / sizeof(indexData[0]);
 				constexpr auto bufferSize = sizeof(indexData[0]) * indexCount;
@@ -160,6 +160,39 @@ namespace eae6320
 		{
 			auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
 			EAE6320_ASSERT(direct3dImmediateContext);
+
+			//ID3D11Device* direct3dDevice = nullptr;
+			//direct3dImmediateContext->GetDevice(&direct3dDevice);
+			//EAE6320_ASSERT(direct3dDevice != nullptr);  // test device vaild
+			//if (direct3dDevice == nullptr)
+			//{
+			//	Logging::OutputError("Failed to retrieve the Direct3D device.");
+			//	return;
+			//}
+			//// Set the Rasterizer State (Culling)
+			//{
+			//	D3D11_RASTERIZER_DESC rasterizerDesc;
+			//	ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+			//	rasterizerDesc.CullMode = D3D11_CULL_BACK;   // Cull back faces
+			//	rasterizerDesc.FrontCounterClockwise = TRUE; // Front face is clockwise (for right-hand system)
+			//	rasterizerDesc.FillMode = D3D11_FILL_SOLID;  // Regular fill (not wireframe)
+			//	rasterizerDesc.DepthClipEnable = TRUE;       // Enable depth clipping
+			//	//rasterizerDesc.ScissorEnable = FALSE;
+			//	//rasterizerDesc.MultisampleEnable = FALSE;
+			//	//rasterizerDesc.AntialiasedLineEnable = FALSE;
+
+			//	ID3D11RasterizerState* rasterizerState = nullptr;
+			//	HRESULT hr = direct3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+			//	if (FAILED(hr))
+			//	{
+			//		Logging::OutputError("Failed to create rasterizer state. HRESULT: 0x%08X", hr);
+			//		return;
+			//	}
+
+			//	direct3dImmediateContext->RSSetState(rasterizerState);
+			//	rasterizerState->Release();
+			//}
+
 
 			// Bind a specific vertex buffer to the device as a data source
 			{
