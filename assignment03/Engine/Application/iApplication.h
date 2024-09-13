@@ -48,7 +48,7 @@ namespace eae6320
 			template<class tApplication>
 		int Run(
 #if defined( EAE6320_PLATFORM_WINDOWS )
-			 const HINSTANCE i_thisInstanceOfTheApplication, const char* const i_commandLineArguments, const int i_initialWindowDisplayState, const std::string& i_vertexShaderPath, const std::string& i_fragmentShaderPath
+			 const HINSTANCE i_thisInstanceOfTheApplication, const char* const i_commandLineArguments, const int i_initialWindowDisplayState
 #endif
 		)
 		{
@@ -57,7 +57,7 @@ namespace eae6320
 			tApplication::sEntryPointParameters entryPointParameters =
 			{
 #if defined( EAE6320_PLATFORM_WINDOWS )
-				i_thisInstanceOfTheApplication, i_commandLineArguments, i_initialWindowDisplayState, i_vertexShaderPath, i_fragmentShaderPath
+				i_thisInstanceOfTheApplication, i_commandLineArguments, i_initialWindowDisplayState
 #endif
 			};
 			// Create an instance of the applciation
@@ -86,9 +86,6 @@ namespace eae6320
 				// The requested initial state of the window
 				// (e.g. minimized, maximized, etc.)
 				const int initialWindowDisplayState = SW_SHOWNORMAL;
-				//The required shaders for the game
-				const std::string vertexShader = "";
-				const std::string fragmentShader = "";
 #endif
 			};
 

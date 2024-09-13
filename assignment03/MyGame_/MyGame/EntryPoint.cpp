@@ -15,5 +15,5 @@ int WINAPI WinMain( HINSTANCE i_thisInstanceOfTheApplication, HINSTANCE, char* i
 {
 	const std::string vertexShaderPath = "data/Shaders/Vertex/standard.shader";
 	const std::string fragmentShaderPath = "data/Shaders/Fragment/animatedColor.shader";
-	return eae6320::Application::Run<eae6320::cMyGame>( i_thisInstanceOfTheApplication, i_commandLineArguments, i_initialWindowDisplayState, vertexShaderPath, fragmentShaderPath );
+	return eae6320::Application::Run<eae6320::cMyGame>( i_thisInstanceOfTheApplication, i_commandLineArguments, i_initialWindowDisplayState);
 }

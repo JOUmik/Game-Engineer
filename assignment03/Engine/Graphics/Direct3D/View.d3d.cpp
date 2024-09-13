@@ -9,7 +9,7 @@ namespace eae6320
 {
     namespace Graphics
     {
-        void View::ClearPreviousImage() 
+        void View::ClearPreviousImage(float g_elapsedSecondCount_simulationTime)
         {
 			auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
 			EAE6320_ASSERT(direct3dImmediateContext);
@@ -21,7 +21,10 @@ namespace eae6320
 				EAE6320_ASSERT(s_renderTargetView);
 
 				// Black is usually used
-				constexpr float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+				float r = (std::cos(9.0f * g_elapsedSecondCount_simulationTime) * 0.1f) + 0.15f;
+				float g = (std::sin(2.0f * g_elapsedSecondCount_simulationTime) * 0.1f) + 0.15f;
+				float b = (-std::cos(5.0f * g_elapsedSecondCount_simulationTime) * 0.1f) + 0.15f;
+				const float clearColor[4] = { r, g, b, 1.0f };
 				direct3dImmediateContext->ClearRenderTargetView(s_renderTargetView, clearColor);
 			}
 			// In addition to the color buffer there is also a hidden image called the "depth buffer"

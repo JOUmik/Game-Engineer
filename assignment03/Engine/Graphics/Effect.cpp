@@ -9,18 +9,16 @@ namespace eae6320
 {
     namespace Graphics
     {
-		eae6320::cResult Effect::InitializeShadingData(const sInitializationParameters& i_initializationParameters)
+		eae6320::cResult Effect::InitializeShadingData(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 		{
 			auto result = eae6320::Results::Success;
 
-			if (!(result = eae6320::Graphics::cShader::Load(i_initializationParameters.vertexShaderPath,
-				s_vertexShader, eae6320::Graphics::eShaderType::Vertex)))
+			if (!(result = eae6320::Graphics::cShader::Load(vertexShaderPath, s_vertexShader, eae6320::Graphics::eShaderType::Vertex)))
 			{
 				EAE6320_ASSERTF(false, "Can't initialize shading data without vertex shader");
 				return result;
 			}
-			if (!(result = eae6320::Graphics::cShader::Load(i_initializationParameters.fragmentShaderPath,
-				s_fragmentShader, eae6320::Graphics::eShaderType::Fragment)))
+			if (!(result = eae6320::Graphics::cShader::Load(fragmentShaderPath, s_fragmentShader, eae6320::Graphics::eShaderType::Fragment)))
 			{
 				EAE6320_ASSERTF(false, "Can't initialize shading data without fragment shader");
 				return result;

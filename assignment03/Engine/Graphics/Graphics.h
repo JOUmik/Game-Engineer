@@ -66,10 +66,6 @@ namespace eae6320
 			HINSTANCE thisInstanceOfTheApplication = NULL;
 	#endif
 #endif
-			const std::string vertexShaderPath;
-			const std::string fragmentShaderPath;
-
-			sInitializationParameters(const std::string i_vertexShaderPath, const std::string i_fragmentShaderPath) : vertexShaderPath(i_vertexShaderPath), fragmentShaderPath(i_fragmentShaderPath) {}
 		};
 
 		cResult Initialize( const sInitializationParameters& i_initializationParameters );

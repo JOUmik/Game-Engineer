@@ -6,6 +6,7 @@
 #endif // EAE6320_PLATFORM
 
 #include "cRenderState.h"
+#include <string>
 
 namespace eae6320
 {
@@ -31,7 +32,7 @@ namespace eae6320
             //---------
             void BindShadingData();
             cResult CleanUp();
-            cResult InitializeShadingData(const sInitializationParameters& i_initializationParameters);
+            cResult InitializeShadingData(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
         };
     }
 }

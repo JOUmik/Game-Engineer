@@ -352,7 +352,7 @@ eae6320::cResult eae6320::Application::iApplication::Initialize_engine(const sEn
 	}
 	// Graphics
 	{
-		Graphics::sInitializationParameters initializationParameters(i_entryPointParameters.vertexShader, i_entryPointParameters.fragmentShader);
+		Graphics::sInitializationParameters initializationParameters;
 		if ( result = PopulateGraphicsInitializationParameters( initializationParameters ) )
 		{
 			if ( !( result = Graphics::Initialize( initializationParameters ) ) )

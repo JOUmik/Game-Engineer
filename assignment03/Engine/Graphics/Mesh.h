@@ -12,11 +12,17 @@ namespace eae6320
 { 
     namespace Graphics 
     {
+        namespace VertexFormats 
+        {
+            struct sVertex_mesh;
+        }
         class Mesh 
         {
         public:
             //varibles
             //--------
+            unsigned int s_vertexCount = 0;
+            unsigned int s_indexCount = 0;
 #ifdef EAE6320_PLATFORM_D3D
             cVertexFormat* s_vertexFormat = nullptr;
 
@@ -37,7 +43,8 @@ namespace eae6320
             //---------
             Mesh();
             ~Mesh();
-            eae6320::cResult InitializeGeometry();
+            void EnsureRightHandedIndexOrder(const VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int indexCount);
+            eae6320::cResult InitializeGeometry(VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int vertexCount, unsigned int indexCount);
             void Draw();
             cResult CleanUp();
         };

@@ -12,9 +12,12 @@ namespace eae6320
 		Mesh::Mesh() {}
 		Mesh::~Mesh() {}
 
-		cResult Mesh::InitializeGeometry()
+		cResult Mesh::InitializeGeometry(VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int vertexCount, unsigned int indexCount)
 		{
 			auto result = eae6320::Results::Success;
+
+			s_vertexCount = vertexCount;
+			s_indexCount = indexCount;
 
 			auto* const direct3dDevice = eae6320::Graphics::sContext::g_context.direct3dDevice;
 			EAE6320_ASSERT(direct3dDevice);
@@ -30,51 +33,10 @@ namespace eae6320
 			}
 			// Vertex Buffer
 			{
-				constexpr unsigned int triangleCount = 3;
-				constexpr unsigned int vertexCountPerTriangle = 3;
-				constexpr auto vertexCount = triangleCount * vertexCountPerTriangle;
-				VertexFormats::sVertex_mesh vertexData[vertexCount];
-				{
-					// Direct3D is left-handed
-					vertexData[0].x = -0.4f;
-					vertexData[0].y = -0.5f;
-					vertexData[0].z = 0.0f;
-
-					vertexData[1].x = 0.4f;
-					vertexData[1].y = 0.3f;
-					vertexData[1].z = 0.0f;
-
-					vertexData[2].x = 0.4f;
-					vertexData[2].y = -0.5f;
-					vertexData[2].z = 0.0f;
-
-					vertexData[3].x = 0.4f;
-					vertexData[3].y = 0.3f;
-					vertexData[3].z = 0.0f;
-
-					vertexData[4].x = -0.4f;
-					vertexData[4].y = -0.5f;
-					vertexData[4].z = 0.0f;
-
-					vertexData[5].x = -0.4f;
-					vertexData[5].y = 0.3f;
-					vertexData[5].z = 0.0f;
-
-					vertexData[6].x = -0.6f;
-					vertexData[6].y = 0.3f;
-					vertexData[6].z = 0.0f;
-
-					vertexData[7].x = 0.0f;
-					vertexData[7].y = 0.7f;
-					vertexData[7].z = 0.0f;
-
-					vertexData[8].x = 0.6f;
-					vertexData[8].y = 0.3f;
-					vertexData[8].z = 0.0f;
-				}
-				constexpr auto bufferSize = sizeof(vertexData[0]) * vertexCount;
+				EnsureRightHandedIndexOrder(vertexData, indexData, indexCount);
+				const auto bufferSize = sizeof(VertexFormats::sVertex_mesh) * vertexCount;
 				EAE6320_ASSERT(bufferSize <= std::numeric_limits<decltype(D3D11_BUFFER_DESC::ByteWidth)>::max());
-				constexpr auto bufferDescription = [bufferSize]
+				const auto bufferDescription = [bufferSize]
 				{
 					D3D11_BUFFER_DESC bufferDescription{};
 
@@ -110,16 +72,9 @@ namespace eae6320
 
 			// Index Buffer
 			{
-				constexpr uint16_t indexData[] =
-				{
-					0, 2, 1,
-					3, 5, 4,
-					6, 8, 7	
-				};
-				constexpr auto indexCount = sizeof(indexData) / sizeof(indexData[0]);
-				constexpr auto bufferSize = sizeof(indexData[0]) * indexCount;
+				const auto bufferSize = sizeof(uint16_t) * indexCount;
 				EAE6320_ASSERT(bufferSize <= std::numeric_limits<decltype(D3D11_BUFFER_DESC::ByteWidth)>::max());
-				constexpr auto bufferDescription = [bufferSize]
+				const auto bufferDescription = [bufferSize]
 				{
 					D3D11_BUFFER_DESC bufferDescription{};
 
@@ -161,39 +116,6 @@ namespace eae6320
 			auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
 			EAE6320_ASSERT(direct3dImmediateContext);
 
-			//ID3D11Device* direct3dDevice = nullptr;
-			//direct3dImmediateContext->GetDevice(&direct3dDevice);
-			//EAE6320_ASSERT(direct3dDevice != nullptr);  // test device vaild
-			//if (direct3dDevice == nullptr)
-			//{
-			//	Logging::OutputError("Failed to retrieve the Direct3D device.");
-			//	return;
-			//}
-			//// Set the Rasterizer State (Culling)
-			//{
-			//	D3D11_RASTERIZER_DESC rasterizerDesc;
-			//	ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
-			//	rasterizerDesc.CullMode = D3D11_CULL_BACK;   // Cull back faces
-			//	rasterizerDesc.FrontCounterClockwise = TRUE; // Front face is clockwise (for right-hand system)
-			//	rasterizerDesc.FillMode = D3D11_FILL_SOLID;  // Regular fill (not wireframe)
-			//	rasterizerDesc.DepthClipEnable = TRUE;       // Enable depth clipping
-			//	//rasterizerDesc.ScissorEnable = FALSE;
-			//	//rasterizerDesc.MultisampleEnable = FALSE;
-			//	//rasterizerDesc.AntialiasedLineEnable = FALSE;
-
-			//	ID3D11RasterizerState* rasterizerState = nullptr;
-			//	HRESULT hr = direct3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-			//	if (FAILED(hr))
-			//	{
-			//		Logging::OutputError("Failed to create rasterizer state. HRESULT: 0x%08X", hr);
-			//		return;
-			//	}
-
-			//	direct3dImmediateContext->RSSetState(rasterizerState);
-			//	rasterizerState->Release();
-			//}
-
-
 			// Bind a specific vertex buffer to the device as a data source
 			{
 				EAE6320_ASSERT(s_vertexBuffer != nullptr);
@@ -227,12 +149,9 @@ namespace eae6320
 			}
 			//Render triangles from the index buffer
 			{
-				constexpr unsigned int triangleCount = 3;
-				constexpr unsigned int vertexCountPerTriangle = 3;
-				constexpr auto indexCountToRender = triangleCount * vertexCountPerTriangle;
 				constexpr unsigned int indexOfFirstIndexToUse = 0;
 				constexpr unsigned int offsetToAddToEachIndex = 0;
-				direct3dImmediateContext->DrawIndexed(static_cast<unsigned int>(indexCountToRender), indexOfFirstIndexToUse, offsetToAddToEachIndex);
+				direct3dImmediateContext->DrawIndexed(static_cast<unsigned int>(s_indexCount), indexOfFirstIndexToUse, offsetToAddToEachIndex);
 			}
 		}
 

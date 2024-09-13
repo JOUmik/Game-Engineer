@@ -29,7 +29,7 @@ namespace eae6320
             View() = default;
             ~View() = default;
 
-            void ClearPreviousImage();
+            void ClearPreviousImage(float g_elapsedSecondCount_simulationTime);
             cResult InitializeViews(const sInitializationParameters& i_initializationParameters);
             void SwapImageToFrontBuffer();
             void CleanUp();

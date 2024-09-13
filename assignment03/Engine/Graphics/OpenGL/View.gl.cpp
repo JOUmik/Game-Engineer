@@ -9,7 +9,7 @@ namespace eae6320
 {
     namespace Graphics
     {
-        void View::ClearPreviousImage()
+        void View::ClearPreviousImage(float g_elapsedSecondCount_simulationTime)
         {
 			// Every frame an entirely new image will be created.
 			// Before drawing anything, then, the previous image will be erased
@@ -17,7 +17,10 @@ namespace eae6320
 			{
 				// Black is usually used
 				{
-					glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+					float r = (std::cos(9.0f * g_elapsedSecondCount_simulationTime) * 0.1f) + 0.15f;
+					float g = (std::sin(2.0f * g_elapsedSecondCount_simulationTime) * 0.1f) + 0.15f;
+					float b = (-std::cos(5.0f * g_elapsedSecondCount_simulationTime) * 0.1f) + 0.15f;
+					glClearColor(r, g, b, 1.0f);
 					EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
 				}
 				{

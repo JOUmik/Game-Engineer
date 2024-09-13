@@ -63,11 +63,47 @@ namespace
 
 	// Geometry Data
 	//--------------
-	eae6320::Graphics::Mesh mesh;
+	eae6320::Graphics::Mesh mesh01;
+	eae6320::Graphics::Mesh mesh02;
 
 	// Shading Data
 	//-------------
-	eae6320::Graphics::Effect effect;
+	eae6320::Graphics::Effect effect01;
+	eae6320::Graphics::Effect effect02;
+
+	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData01[] =
+	{
+		//right - handed
+		{ -0.4f, -0.5f, 0.0f },
+		{  0.4f,  0.3f, 0.0f },
+		{  0.4f, -0.5f, 0.0f },
+		{ -0.4f,  0.3f, 0.0f },
+		{ -0.6f,  0.3f, 0.0f },
+		{  0.0f,  0.6f, 0.0f },
+		{  0.6f,  0.3f, 0.0f },
+	};
+
+	uint16_t indexData01[] =
+	{
+		0, 2, 1,
+		0, 1, 3,
+		4, 6, 5
+	};
+
+	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData02[] =
+	{
+		//right - handed
+		{  0.3f,  0.45f, 0.0f },
+		{  0.5f,  0.35f, 0.0f },
+		{  0.5f,  0.6f, 0.0f },
+		{  0.3f,  0.6f, 0.0f }
+	};
+
+	uint16_t indexData02[] =
+	{
+		0, 1, 2,
+		0, 2, 3
+	};
 }
 
 // Interface
@@ -126,7 +162,8 @@ void eae6320::Graphics::RenderFrame()
 		}
 	}
 
-	view.ClearPreviousImage();
+	auto& constantData_frame = s_dataBeingSubmittedByApplicationThread->constantData_frame;
+	view.ClearPreviousImage(constantData_frame.g_elapsedSecondCount_simulationTime);
 
 	EAE6320_ASSERT(s_dataBeingRenderedByRenderThread);
 
@@ -138,10 +175,16 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	// Bind the shading data
-	effect.BindShadingData();
+	effect01.BindShadingData();
 
 	// Draw the geometry
-	mesh.Draw();
+	mesh01.Draw();
+
+	// Bind the shading data
+	effect02.BindShadingData();
+
+	// Draw the geometry
+	mesh02.Draw();
 
 	view.SwapImageToFrontBuffer();
 
@@ -207,7 +250,12 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the shading data
 	{
-		if (!(result = effect.InitializeShadingData(i_initializationParameters)))
+		if (!(result = effect01.InitializeShadingData("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader")))
+		{
+			EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
+			return result;
+		}
+		if (!(result = effect02.InitializeShadingData("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader")))
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
 			return result;
@@ -215,7 +263,12 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the geometry
 	{
-		if (!(result = mesh.InitializeGeometry()))
+		if (!(result = mesh01.InitializeGeometry(vertexData01, indexData01, 7, 9)))
+		{
+			EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
+			return result;
+		}
+		if (!(result = mesh02.InitializeGeometry(vertexData02, indexData02, 4, 6)))
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
 			return result;
@@ -231,9 +284,13 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 	view.CleanUp();
 
-	result = mesh.CleanUp();
+	result = mesh01.CleanUp();
 
-	result = effect.CleanUp();
+	result = mesh02.CleanUp();
+
+	result = effect01.CleanUp();
+
+	result = effect02.CleanUp();
 
 	{
 		const auto result_constantBuffer_frame = s_constantBuffer_frame.CleanUp();
