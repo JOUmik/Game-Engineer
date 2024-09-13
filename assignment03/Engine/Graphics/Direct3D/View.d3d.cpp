@@ -4,6 +4,7 @@
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/ScopeGuard/cScopeGuard.h>
 #include <Engine/Logging/Logging.h>
+#include <cmath>
 
 namespace eae6320
 {

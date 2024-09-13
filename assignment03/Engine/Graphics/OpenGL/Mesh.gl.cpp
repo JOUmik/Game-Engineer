@@ -17,7 +17,7 @@ namespace eae6320
 
 			s_vertexCount = vertexCount;
 			s_indexCount = indexCount;
-
+			
 			// Create a vertex array object and make it active
 			{
 				constexpr GLsizei arrayCount = 1;
