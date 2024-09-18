@@ -5,7 +5,10 @@
 #include "Engine/Graphics/OpenGL/Includes.h"
 #endif // EAE6320_PLATFORM
 
+
 #include "cRenderState.h"
+
+#include <Engine/Assets/ReferenceCountedAssets.h>
 #include <string>
 
 namespace eae6320
@@ -17,6 +20,16 @@ namespace eae6320
         class Effect 
         {
         public:
+            //factory mode
+            static cResult Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, Effect*& o_effect);
+
+            EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS( Effect );
+
+            // Reference Counting
+            //-------------------
+            EAE6320_ASSETS_DECLAREREFERENCECOUNT();
+            EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS();
+
             //varibles
             //--------
             cShader* s_vertexShader = nullptr;
@@ -31,6 +44,11 @@ namespace eae6320
             //functions
             //---------
             void BindShadingData();
+
+        private:
+            Effect();
+            ~Effect();
+
             cResult CleanUp();
             cResult InitializeShadingData(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
         };

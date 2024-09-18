@@ -75,8 +75,8 @@ namespace
 
 	// Shading Data
 	//-------------
-	eae6320::Graphics::Effect effect01;
-	eae6320::Graphics::Effect effect02;
+	eae6320::Graphics::Effect* effect01 = nullptr;
+	eae6320::Graphics::Effect* effect02 = nullptr;
 
 	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData01[] =
 	{
@@ -192,13 +192,13 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	// Bind the shading data
-	effect01.BindShadingData();
+	effect01->BindShadingData();
 
 	// Draw the geometry
 	mesh01.Draw();
 
 	// Bind the shading data
-	effect02.BindShadingData();
+	effect02->BindShadingData();
 
 	// Draw the geometry
 	mesh02.Draw();
@@ -267,12 +267,12 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the shading data
 	{
-		if (!(result = effect01.InitializeShadingData("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader")))
+		if (!(result = Effect::Load("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01)))
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
 			return result;
 		}
-		if (!(result = effect02.InitializeShadingData("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader")))
+		if (!(result = Effect::Load("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02)))
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
 			return result;
@@ -305,9 +305,9 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 	result = mesh02.CleanUp();
 
-	result = effect01.CleanUp();
+	effect01->DecrementReferenceCount();
 
-	result = effect02.CleanUp();
+	effect02->DecrementReferenceCount();
 
 	{
 		const auto result_constantBuffer_frame = s_constantBuffer_frame.CleanUp();
