@@ -57,7 +57,12 @@ namespace
 
 void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
-	Graphics::UpdateBackgroundColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+	//animated background
+	float simulateTime = static_cast<float>(GetElapsedSecondCount_simulation());
+	float r = (std::cos(9.0f * simulateTime) * 0.1f) + 0.15f;
+	float g = (std::sin(2.0f * simulateTime) * 0.1f) + 0.15f;
+	float b = (-std::cos(5.0f * simulateTime) * 0.1f) + 0.15f;
+	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
 	
 	Graphics::BindMeshWithEffect(mesh01, effect01);
 	if (isDiffShader) 
