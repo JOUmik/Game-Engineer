@@ -7,6 +7,7 @@
 #include "Engine/Graphics/OpenGL/Includes.h"
 #endif // EAE6320_PLATFORM
 
+#include <Engine/Assets/ReferenceCountedAssets.h>
 
 namespace eae6320
 { 
@@ -39,13 +40,25 @@ namespace eae6320
             GLuint s_vertexArrayId = 0;
 #endif
 
+            //factory mode
+            static cResult Load(VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int vertexCount, unsigned int indexCount, Mesh*& o_mesh);
+
+            EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh);
+
+            // Reference Counting
+            //-------------------
+            EAE6320_ASSETS_DECLAREREFERENCECOUNT();
+            EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS();
+
+            void Draw();
+
+        private:
             //functions
             //---------
             Mesh();
             ~Mesh();
             void EnsureRightHandedIndexOrder(const VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int indexCount);
-            eae6320::cResult InitializeGeometry(VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int vertexCount, unsigned int indexCount);
-            void Draw();
+            eae6320::cResult InitializeGeometry(VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int vertexCount, unsigned int indexCount);
             cResult CleanUp();
         };
     }

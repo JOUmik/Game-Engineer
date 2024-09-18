@@ -9,10 +9,7 @@ namespace eae6320
 {
     namespace Graphics 
     {
-        Mesh::Mesh() {}
-        Mesh::~Mesh() {}
-
-        eae6320::cResult Mesh::InitializeGeometry(VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int vertexCount, unsigned int indexCount) {
+        eae6320::cResult Mesh::InitializeGeometry(VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int vertexCount, unsigned int indexCount) {
 			auto result = eae6320::Results::Success;
 
 			s_vertexCount = vertexCount;

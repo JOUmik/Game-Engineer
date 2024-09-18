@@ -80,7 +80,7 @@ namespace eae6320
 				if (!newEffect)
 				{
 					result = Results::OutOfMemory;
-					EAE6320_ASSERTF(false, "Couldn't allocate memory for the effec");
+					EAE6320_ASSERTF(false, "Couldn't allocate memory for the effect");
 					Logging::OutputError("Failed to allocate memory for the effect");
 					return result;
 				}

@@ -70,8 +70,8 @@ namespace
 
 	// Geometry Data
 	//--------------
-	eae6320::Graphics::Mesh mesh01;
-	eae6320::Graphics::Mesh mesh02;
+	eae6320::Graphics::Mesh* mesh01 = nullptr;
+	eae6320::Graphics::Mesh* mesh02 = nullptr;
 
 	// Shading Data
 	//-------------
@@ -195,13 +195,13 @@ void eae6320::Graphics::RenderFrame()
 	effect01->BindShadingData();
 
 	// Draw the geometry
-	mesh01.Draw();
+	mesh01->Draw();
 
 	// Bind the shading data
 	effect02->BindShadingData();
 
 	// Draw the geometry
-	mesh02.Draw();
+	mesh02->Draw();
 
 	view.SwapImageToFrontBuffer();
 
@@ -280,12 +280,16 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the geometry
 	{
-		if (!(result = mesh01.InitializeGeometry(vertexData01, indexData01, 7, 9)))
+		VertexFormats::sVertex_mesh* vertexPtr01 = vertexData01;
+		uint16_t* indexPtr01 = indexData01;
+		if (!(result = Mesh::Load(vertexPtr01, indexPtr01, 7, 9, mesh01)))
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
 			return result;
 		}
-		if (!(result = mesh02.InitializeGeometry(vertexData02, indexData02, 4, 6)))
+		VertexFormats::sVertex_mesh* vertexPtr02 = vertexData02;
+		uint16_t* indexPtr02 = indexData02;
+		if (!(result = Mesh::Load(vertexPtr02, indexPtr02, 4, 6, mesh02)))
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
 			return result;
@@ -301,9 +305,11 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 	view.CleanUp();
 
-	result = mesh01.CleanUp();
+	//result = mesh01.CleanUp();
+	mesh01->DecrementReferenceCount();
 
-	result = mesh02.CleanUp();
+	//result = mesh02.CleanUp();
+	mesh02->DecrementReferenceCount();
 
 	effect01->DecrementReferenceCount();
 
