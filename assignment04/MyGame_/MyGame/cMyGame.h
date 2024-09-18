@@ -11,6 +11,7 @@
 #include <Engine/Application/iApplication.h>
 #include <Engine/Results/Results.h>
 
+
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include "Resource Files/Resource.h"
 #endif
@@ -28,10 +29,25 @@ namespace eae6320
 		float a = 1.f;
 	};
 
+	namespace Graphics 
+	{
+		class Mesh;
+		class Effect;
+	}
+
 	class cMyGame final : public Application::iApplication
 	{
 	public:
 		sColor backgroundColor;
+		Graphics::Mesh* mesh01 = nullptr;
+		Graphics::Mesh* mesh02 = nullptr;
+		Graphics::Effect* effect01 = nullptr;
+		Graphics::Effect* effect02 = nullptr;
+
+		//Input Control
+		bool isShow = true;
+		bool isDiffShader = true;
+
 		// Inherited Implementation
 		//=========================
 

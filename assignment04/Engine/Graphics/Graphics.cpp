@@ -23,6 +23,7 @@
 #include <Engine/UserOutput/UserOutput.h>
 #include <new>
 #include <utility>
+#include <vector>
 
 // Static Data
 //============
@@ -49,6 +50,7 @@ namespace
 	{
 		eae6320::Graphics::ConstantBufferFormats::sFrame constantData_frame;
 		sColor backgroundColor;
+		std::vector<std::pair<eae6320::Graphics::Mesh*&, eae6320::Graphics::Effect*&>> meshEffectPairs;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be in the process of being populated by the data currently being submitted by the application loop thread
@@ -137,6 +139,22 @@ eae6320::cResult eae6320::Graphics::SignalThatAllDataForAFrameHasBeenSubmitted()
 	return s_whenAllDataHasBeenSubmittedFromApplicationThread.Signal();
 }
 
+void eae6320::Graphics::CreateMesh(VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int vertexCount, unsigned int indexCount, Mesh*& o_mesh)
+{
+	if (!Mesh::Load(vertexData, indexData, vertexCount, indexCount, o_mesh))
+	{
+		EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
+	}
+}
+
+void eae6320::Graphics::CreateEffect(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, Effect*& o_effect)
+{
+	if (!Effect::Load(vertexShaderPath, fragmentShaderPath, o_effect))
+	{
+		EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
+	}
+}
+
 void eae6320::Graphics::UpdateBackgroundColor(float r, float g, float b, float a)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
@@ -145,6 +163,23 @@ void eae6320::Graphics::UpdateBackgroundColor(float r, float g, float b, float a
 	backgroundColor.g = g;
 	backgroundColor.b = b;
 	backgroundColor.a = a;
+}
+
+void eae6320::Graphics::BindMeshWithEffect(Mesh*& mesh, Effect*& effect)
+{
+	if (mesh == nullptr) 
+	{
+		EAE6320_ASSERTF(false, "the mesh is null");
+		Logging::OutputError("the mesh is null");	
+	}
+	if (effect == nullptr)
+	{
+		EAE6320_ASSERTF(false, "the effect is null");
+		Logging::OutputError("the effect is null");
+	}
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	auto& meshEffectPairs = s_dataBeingSubmittedByApplicationThread->meshEffectPairs;
+	meshEffectPairs.emplace_back( mesh, effect );
 }
 
 // Render
@@ -191,17 +226,22 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_frame.Update(&constantData_frame);
 	}
 
-	// Bind the shading data
-	effect01->BindShadingData();
+	//// Bind the shading data
+	//effect01->BindShadingData();
 
-	// Draw the geometry
-	mesh01->Draw();
+	//// Draw the geometry
+	//mesh01->Draw();
 
-	// Bind the shading data
-	effect02->BindShadingData();
+	//// Bind the shading data
+	//effect02->BindShadingData();
 
-	// Draw the geometry
-	mesh02->Draw();
+	//// Draw the geometry
+	//mesh02->Draw();
+	for (std::pair<eae6320::Graphics::Mesh*&, eae6320::Graphics::Effect*&> p : s_dataBeingRenderedByRenderThread->meshEffectPairs) 
+	{
+		p.second->BindShadingData();
+		p.first->Draw();
+	}
 
 	view.SwapImageToFrontBuffer();
 
@@ -211,6 +251,7 @@ void eae6320::Graphics::RenderFrame()
 	{
 		// (At this point in the class there isn't anything that needs to be cleaned up)
 		//dataRequiredToRenderFrame	// TODO
+		s_dataBeingRenderedByRenderThread->meshEffectPairs.clear();
 	}
 }
 

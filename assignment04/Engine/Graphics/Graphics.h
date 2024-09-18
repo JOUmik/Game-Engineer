@@ -25,6 +25,12 @@ namespace eae6320
 {
 	namespace Graphics
 	{
+		class Mesh;
+		class Effect;
+		namespace VertexFormats
+		{
+			struct sVertex_mesh;
+		}
 		// Submission
 		//-----------
 
@@ -45,7 +51,10 @@ namespace eae6320
 		// it must call this function
 		cResult SignalThatAllDataForAFrameHasBeenSubmitted();
 
+		void CreateMesh(VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int vertexCount, unsigned int indexCount, Mesh*& o_mesh);
+		void CreateEffect(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, Effect*& o_effect);
 		void UpdateBackgroundColor(float r = 0.f, float g = 0.f, float b = 0.f, float a = 1.f);
+		void BindMeshWithEffect(Mesh*& mesh, Effect*& effect);
 
 		// Render
 		//-------
