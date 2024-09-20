@@ -22,8 +22,6 @@ namespace eae6320
         public:
             //varibles
             //--------
-            unsigned int s_vertexCount = 0;
-            unsigned int s_indexCount = 0;
 #ifdef EAE6320_PLATFORM_D3D
             cVertexFormat* s_vertexFormat = nullptr;
 
@@ -40,8 +38,8 @@ namespace eae6320
             GLuint s_vertexArrayId = 0;
 #endif
 
-            //factory mode
-            static cResult Load(VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int vertexCount, unsigned int indexCount, Mesh*& o_mesh);
+            unsigned int s_vertexCount = 0;
+            unsigned int s_indexCount = 0;
 
             EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh);
 
@@ -49,6 +47,9 @@ namespace eae6320
             //-------------------
             EAE6320_ASSETS_DECLAREREFERENCECOUNT();
             EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS();
+
+            //factory mode
+            static cResult Load(VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int vertexCount, unsigned int indexCount, Mesh*& o_mesh);
 
             void Draw();
 

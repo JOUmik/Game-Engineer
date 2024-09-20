@@ -135,6 +135,11 @@ void eae6320::Graphics::BindMeshWithEffect(Mesh*& mesh, Effect*& effect)
 	}
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	auto& meshEffectPairs = s_dataBeingSubmittedByApplicationThread->meshEffectPairs;
+	if (meshEffectPairs.size() > 99) 
+	{
+		EAE6320_ASSERTF(false, "the mesh number over the limitation, the limitation of mesh is 99");
+		Logging::OutputError("the mesh number over the limitation, the limitation of mesh is 99");
+	}
 	meshEffectPairs.emplace_back( mesh, effect );
 }
 
