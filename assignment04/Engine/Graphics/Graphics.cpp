@@ -69,50 +69,6 @@ namespace
 	// and the application loop thread can start submitting data for the following frame
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
-
-	// Geometry Data
-	//--------------
-	eae6320::Graphics::Mesh* mesh01 = nullptr;
-	eae6320::Graphics::Mesh* mesh02 = nullptr;
-
-	// Shading Data
-	//-------------
-	eae6320::Graphics::Effect* effect01 = nullptr;
-	eae6320::Graphics::Effect* effect02 = nullptr;
-
-	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData01[] =
-	{
-		//right - handed
-		{ -0.4f, -0.5f, 0.0f },
-		{  0.4f,  0.3f, 0.0f },
-		{  0.4f, -0.5f, 0.0f },
-		{ -0.4f,  0.3f, 0.0f },
-		{ -0.6f,  0.3f, 0.0f },
-		{  0.0f,  0.6f, 0.0f },
-		{  0.6f,  0.3f, 0.0f },
-	};
-
-	uint16_t indexData01[] =
-	{
-		0, 2, 1,
-		0, 1, 3,
-		4, 6, 5
-	};
-
-	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData02[] =
-	{
-		//right - handed
-		{  0.3f,  0.45f, 0.0f },
-		{  0.5f,  0.35f, 0.0f },
-		{  0.5f,  0.6f, 0.0f },
-		{  0.3f,  0.6f, 0.0f }
-	};
-
-	uint16_t indexData02[] =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
 }
 
 // Interface
@@ -306,36 +262,6 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 			return result;
 		}
 	}
-	// Initialize the shading data
-	{
-		if (!(result = Effect::Load("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01)))
-		{
-			EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
-			return result;
-		}
-		if (!(result = Effect::Load("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02)))
-		{
-			EAE6320_ASSERTF(false, "Can't initialize Graphics without the shading data");
-			return result;
-		}
-	}
-	// Initialize the geometry
-	{
-		VertexFormats::sVertex_mesh* vertexPtr01 = vertexData01;
-		uint16_t* indexPtr01 = indexData01;
-		if (!(result = Mesh::Load(vertexPtr01, indexPtr01, 7, 9, mesh01)))
-		{
-			EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
-			return result;
-		}
-		VertexFormats::sVertex_mesh* vertexPtr02 = vertexData02;
-		uint16_t* indexPtr02 = indexData02;
-		if (!(result = Mesh::Load(vertexPtr02, indexPtr02, 4, 6, mesh02)))
-		{
-			EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
-			return result;
-		}
-	}
 
 	return result;
 }
@@ -345,16 +271,6 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	auto result = Results::Success;
 
 	view.CleanUp();
-
-	//result = mesh01.CleanUp();
-	mesh01->DecrementReferenceCount();
-
-	//result = mesh02.CleanUp();
-	mesh02->DecrementReferenceCount();
-
-	effect01->DecrementReferenceCount();
-
-	effect02->DecrementReferenceCount();
 
 	{
 		const auto result_constantBuffer_frame = s_constantBuffer_frame.CleanUp();

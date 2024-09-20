@@ -61,7 +61,7 @@ void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_s
 	float simulateTime = static_cast<float>(GetElapsedSecondCount_simulation());
 	float r = (std::cos(9.0f * simulateTime) * 0.1f) + 0.15f;
 	float g = (std::sin(2.0f * simulateTime) * 0.1f) + 0.15f;
-	float b = (-std::cos(5.0f * simulateTime) * 0.1f) + 0.15f;
+	float b = (-std::cos(5.0f * simulateTime) * 0.2f) + 0.25f;
 	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
 	
 	Graphics::BindMeshWithEffect(mesh01, effect01);
