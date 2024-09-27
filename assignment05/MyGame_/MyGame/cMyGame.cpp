@@ -59,6 +59,21 @@ namespace
 		0, 1, 2,
 		0, 2, 3
 	};
+
+	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData03[] =
+	{
+		//right - handed
+		{  -0.4f,  -0.4f, 0.0f },
+		{  0.4f,  -0.4f, 0.0f },
+		{  0.4f,  0.4f, 0.0f },
+		{  -0.4f,  0.4f, 0.0f }
+	};
+
+	uint16_t indexData03[] =
+	{
+		0, 1, 2,
+		0, 2, 3
+	};
 }
 
 void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
@@ -90,6 +105,7 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 {
 	static bool F1Pressed = false;
 	static bool F2Pressed = false;
+	static bool F3Pressed = false;
 	static bool WPressed = false;
 	static bool SPressed = false;
 	static bool APressed = false;
@@ -143,6 +159,21 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::F2) && F2Pressed)
 	{
 		F2Pressed = false;
+	}
+
+	//Change Mesh
+	{
+		if (UserInput::IsKeyPressed(UserInput::KeyCodes::F3) && !F3Pressed)
+		{
+			isCubeMesh = !isCubeMesh;
+			SwitchMesh();
+			F3Pressed = true;
+		}
+
+		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::F3) && F3Pressed)
+		{
+			F3Pressed = false;
+		}
 	}
 
 	//Actor Movement
@@ -266,6 +297,7 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	backgroundColor.b = 0.7f;
 	Graphics::CreateMesh(vertexData01, indexData01, 7, 9, mesh01);
 	Graphics::CreateMesh(vertexData02, indexData02, 4, 6, mesh02);
+	Graphics::CreateMesh(vertexData03, indexData03, 4, 6, mesh03);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02);
 
@@ -290,12 +322,15 @@ eae6320::cResult eae6320::cMyGame::CleanUp()
 {
 	house->CleanUp();
 	chimney->CleanUp();
+	camera->CleanUp();
 	delete house;
 	delete chimney;
 	delete camera;
+	delete playerController;
 
 	mesh01->DecrementReferenceCount();
 	mesh02->DecrementReferenceCount();
+	mesh03->DecrementReferenceCount();
 	effect01->DecrementReferenceCount();
 	effect02->DecrementReferenceCount();
 	return Results::Success;
@@ -313,5 +348,17 @@ void eae6320::cMyGame::SwitchShader()
 	else 
 	{
 		house->ChangeEffect(effect01);
+	}
+}
+
+void eae6320::cMyGame::SwitchMesh()
+{
+	if (isCubeMesh) 
+	{
+		house->ChangeMesh(mesh03);
+	}
+	else 
+	{
+		house->ChangeMesh(mesh01);
 	}
 }

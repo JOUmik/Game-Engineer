@@ -51,6 +51,7 @@ namespace eae6320
 		sColor backgroundColor;
 		Graphics::Mesh* mesh01 = nullptr;
 		Graphics::Mesh* mesh02 = nullptr;
+		Graphics::Mesh* mesh03 = nullptr;
 		Graphics::Effect* effect01 = nullptr;
 		Graphics::Effect* effect02 = nullptr;
 
@@ -67,6 +68,7 @@ namespace eae6320
 		//Input Control
 		bool isShow = true;
 		bool isDiffShader = true;
+		bool isCubeMesh = false;
 
 		// Inherited Implementation
 		//=========================
@@ -128,6 +130,7 @@ namespace eae6320
 
 		//input interaction
 		void SwitchShader();
+		void SwitchMesh();
 	};
 }
 
