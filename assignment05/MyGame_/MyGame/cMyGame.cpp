@@ -151,6 +151,8 @@ eae6320::cResult eae6320::cMyGame::CleanUp()
 {
 	house->CleanUp();
 	chimney->CleanUp();
+	delete house;
+	delete chimney;
 
 	mesh01->DecrementReferenceCount();
 	mesh02->DecrementReferenceCount();
