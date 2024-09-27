@@ -21,9 +21,21 @@
     <ClInclude Include="Actor.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

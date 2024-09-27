@@ -24,6 +24,8 @@ namespace eae6320
 	namespace GameFramework
 	{
 		class AActor;
+		class ACameraActor;
+		class APlayerController;
 	}
 	namespace Physics
 	{
@@ -52,12 +54,15 @@ namespace eae6320
 		Graphics::Effect* effect01 = nullptr;
 		Graphics::Effect* effect02 = nullptr;
 
+		//Player Controller
+		eae6320::GameFramework::APlayerController* playerController = nullptr;
+
 		//Actors
 		eae6320::GameFramework::AActor* house = nullptr;
 		eae6320::GameFramework::AActor* chimney = nullptr;
 
 		//Cameras
-		eae6320::Physics::sRigidBodyState* camera = nullptr;
+		eae6320::GameFramework::ACameraActor* camera = nullptr;
 
 		//Input Control
 		bool isShow = true;

@@ -10,6 +10,8 @@
 #include <Engine/Graphics/Mesh.h>
 #include <Engine/Graphics/VertexFormats.h>
 #include <Engine/GameFramework/Actor.h>
+#include <Engine/GameFramework/CameraActor.h>
+#include <Engine/GameFramework/PlayerController.h>
 #include <Engine/Physics/sRigidBodyState.h>
 #include <Engine/Math/cMatrix_transformation.h>
 #include <Engine/Math/Functions.h>
@@ -78,15 +80,9 @@ void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_s
 		}
 	}
 
-	// Camera
+	// Player Controller send the binded camera date to graphics
 	{
-		// Calculate Camera Data
-		auto cameraToProjected = Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(eae6320::Math::ConvertDegreesToRadians(45.f), 1.0f, 0.1f, 50.0f);
-		auto worldToCamera = Math::cMatrix_transformation::CreateWorldToCameraTransform(
-			camera->PredictFutureTransform(i_elapsedSecondCount_sinceLastSimulationUpdate)
-		);
-		// Submit Camera Data
-		Graphics::BindCameraData(cameraToProjected, worldToCamera);
+		playerController->SubmitDataToGraphics(i_elapsedSecondCount_sinceLastSimulationUpdate);
 	}
 }
 
@@ -205,48 +201,48 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 		//Up
 		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && !UpArrowPressed)
 		{
-			camera->velocity.y += 1.f;
+			camera->SetVelocity(camera->GetVelocity() + Math::sVector(0, 1.f, 0));
 			UpArrowPressed = true;
 		}
 		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && UpArrowPressed)
 		{
-			camera->velocity.y -= 1.f;
+			camera->SetVelocity(camera->GetVelocity() - Math::sVector(0, 1.f, 0));
 			UpArrowPressed = false;
 		}
 
 		//Down
 		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && !DownArrowPressed)
 		{
-			camera->velocity.y -= 1.f;
+			camera->SetVelocity(camera->GetVelocity() - Math::sVector(0, 1.f, 0));
 			DownArrowPressed = true;
 		}
 		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && DownArrowPressed)
 		{
-			camera->velocity.y += 1.f;
+			camera->SetVelocity(camera->GetVelocity() + Math::sVector(0, 1.f, 0));
 			DownArrowPressed = false;
 		}
 
 		//Right
 		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && !RightArrowPressed)
 		{
-			camera->velocity.x += 1.f;
+			camera->SetVelocity(camera->GetVelocity() + Math::sVector(1.f, 0, 0));
 			RightArrowPressed = true;
 		}
 		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && RightArrowPressed)
 		{
-			camera->velocity.x -= 1.f;
+			camera->SetVelocity(camera->GetVelocity() - Math::sVector(1.f, 0, 0));
 			RightArrowPressed = false;
 		}
 
 		//Left
 		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && !LeftArrowPressed)
 		{
-			camera->velocity.x -= 1.f;
+			camera->SetVelocity(camera->GetVelocity() - Math::sVector(1.f, 0, 0));
 			LeftArrowPressed = true;
 		}
 		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && LeftArrowPressed)
 		{
-			camera->velocity.x += 1.f;
+			camera->SetVelocity(camera->GetVelocity() + Math::sVector(1.f, 0, 0));
 			LeftArrowPressed = false;
 		}
 	}
@@ -273,12 +269,19 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02);
 
+	//Player Controller
+	playerController = new eae6320::GameFramework::APlayerController();
+
+	//Actor
 	house = new eae6320::GameFramework::AActor(mesh01, effect01);
 	chimney = new eae6320::GameFramework::AActor(mesh02, effect02);
 
 	//Camera
-	camera = new eae6320::Physics::sRigidBodyState();
-	camera->position = Math::sVector(0.f, 0.f, 6.f);
+	camera = new eae6320::GameFramework::ACameraActor();
+	camera->SetPosition(Math::sVector(0, 0, 6.f));
+
+
+	playerController->SetCurrentCamera(camera);
 
 	return Results::Success;
 }
