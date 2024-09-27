@@ -10,6 +10,9 @@
 #include <Engine/Graphics/Mesh.h>
 #include <Engine/Graphics/VertexFormats.h>
 #include <Engine/GameFramework/Actor.h>
+#include <Engine/Physics/sRigidBodyState.h>
+#include <Engine/Math/cMatrix_transformation.h>
+#include <Engine/Math/Functions.h>
 
 // Inherited Implementation
 //=========================
@@ -65,20 +68,40 @@ void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_s
 	float b = (-std::cos(5.0f * simulateTime) * 0.2f) + 0.25f;
 	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
 	
-
-	house->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
-
-	if (isShow) 
+	//Draw Actors
 	{
-		chimney->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+		house->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+
+		if (isShow)
+		{
+			chimney->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+		}
 	}
-	
+
+	// Camera
+	{
+		// Calculate Camera Data
+		auto cameraToProjected = Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(eae6320::Math::ConvertDegreesToRadians(45.f), 1.0f, 0.1f, 50.0f);
+		auto worldToCamera = Math::cMatrix_transformation::CreateWorldToCameraTransform(
+			camera->PredictFutureTransform(i_elapsedSecondCount_sinceLastSimulationUpdate)
+		);
+		// Submit Camera Data
+		Graphics::BindCameraData(cameraToProjected, worldToCamera);
+	}
 }
 
 void eae6320::cMyGame::UpdateBasedOnInput()
 {
 	static bool F1Pressed = false;
 	static bool F2Pressed = false;
+	static bool WPressed = false;
+	static bool SPressed = false;
+	static bool APressed = false;
+	static bool DPressed = false;
+	static bool UpArrowPressed = false;
+	static bool DownArrowPressed = false;
+	static bool LeftArrowPressed = false;
+	static bool RightArrowPressed = false;
 	// Is the user pressing the ESC key?
 	if ( UserInput::IsKeyPressed( UserInput::KeyCodes::Escape ) )
 	{
@@ -125,6 +148,115 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 	{
 		F2Pressed = false;
 	}
+
+	//Actor Movement
+	{
+		//Up
+		if (UserInput::IsKeyPressed('W') && !WPressed)
+		{
+			house->rigidBodyState->velocity.y += 1.f;
+			WPressed = true;
+		}
+		if (!UserInput::IsKeyPressed('W') && WPressed)
+		{
+			house->rigidBodyState->velocity.y -= 1.f;
+			WPressed = false;
+		}
+
+		//Down
+		if (UserInput::IsKeyPressed('S') && !SPressed)
+		{
+			house->rigidBodyState->velocity.y -= 1.f;
+			SPressed = true;
+		}
+		if (!UserInput::IsKeyPressed('S') && SPressed)
+		{
+			house->rigidBodyState->velocity.y += 1.f;
+			SPressed = false;
+		}
+
+		//Right
+		if (UserInput::IsKeyPressed('D') && !DPressed)
+		{
+			house->rigidBodyState->velocity.x += 1.f;
+			DPressed = true;
+		}
+		if (!UserInput::IsKeyPressed('D') && DPressed)
+		{
+			house->rigidBodyState->velocity.x -= 1.f;
+			DPressed = false;
+		}
+
+		//Left
+		if (UserInput::IsKeyPressed('A') && !APressed)
+		{
+			house->rigidBodyState->velocity.x -= 1.f;
+			APressed = true;
+		}
+		if (!UserInput::IsKeyPressed('A') && APressed)
+		{
+			house->rigidBodyState->velocity.x += 1.f;
+			APressed = false;
+		}
+	}
+
+	//Camera Movement
+	{
+		//Up
+		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && !UpArrowPressed)
+		{
+			camera->velocity.y += 1.f;
+			UpArrowPressed = true;
+		}
+		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && UpArrowPressed)
+		{
+			camera->velocity.y -= 1.f;
+			UpArrowPressed = false;
+		}
+
+		//Down
+		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && !DownArrowPressed)
+		{
+			camera->velocity.y -= 1.f;
+			DownArrowPressed = true;
+		}
+		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && DownArrowPressed)
+		{
+			camera->velocity.y += 1.f;
+			DownArrowPressed = false;
+		}
+
+		//Right
+		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && !RightArrowPressed)
+		{
+			camera->velocity.x += 1.f;
+			RightArrowPressed = true;
+		}
+		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && RightArrowPressed)
+		{
+			camera->velocity.x -= 1.f;
+			RightArrowPressed = false;
+		}
+
+		//Left
+		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && !LeftArrowPressed)
+		{
+			camera->velocity.x -= 1.f;
+			LeftArrowPressed = true;
+		}
+		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && LeftArrowPressed)
+		{
+			camera->velocity.x += 1.f;
+			LeftArrowPressed = false;
+		}
+	}
+}
+
+void eae6320::cMyGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
+{
+	house->rigidBodyState->Update(i_elapsedSecondCount_sinceLastUpdate);
+	chimney->rigidBodyState->Update(i_elapsedSecondCount_sinceLastUpdate);
+	camera->Update(i_elapsedSecondCount_sinceLastUpdate);
 }
 
 // Initialize / Clean Up
@@ -144,6 +276,10 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	house = new eae6320::GameFramework::AActor(mesh01, effect01);
 	chimney = new eae6320::GameFramework::AActor(mesh02, effect02);
 
+	//Camera
+	camera = new eae6320::Physics::sRigidBodyState();
+	camera->position = Math::sVector(0.f, 0.f, 6.f);
+
 	return Results::Success;
 }
 
@@ -153,6 +289,7 @@ eae6320::cResult eae6320::cMyGame::CleanUp()
 	chimney->CleanUp();
 	delete house;
 	delete chimney;
+	delete camera;
 
 	mesh01->DecrementReferenceCount();
 	mesh02->DecrementReferenceCount();

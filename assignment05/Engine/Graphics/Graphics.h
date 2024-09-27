@@ -61,6 +61,7 @@ namespace eae6320
 		void CreateEffect(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, Effect*& o_effect);
 		void UpdateBackgroundColor(float r = 0.f, float g = 0.f, float b = 0.f, float a = 1.f);
 		void BindMeshWithEffect(Mesh*& mesh, Effect*& effect, const Math::cMatrix_transformation& transformation);
+		void BindCameraData(const Math::cMatrix_transformation& cameraToProjected, const Math::cMatrix_transformation& worldToCamera);
 
 		// Render
 		//-------

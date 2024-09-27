@@ -25,6 +25,10 @@ namespace eae6320
 	{
 		class AActor;
 	}
+	namespace Physics
+	{
+		struct sRigidBodyState;
+	}
 	struct sColor
 	{
 		float r = 0.f;
@@ -51,6 +55,9 @@ namespace eae6320
 		//Actors
 		eae6320::GameFramework::AActor* house = nullptr;
 		eae6320::GameFramework::AActor* chimney = nullptr;
+
+		//Cameras
+		eae6320::Physics::sRigidBodyState* camera = nullptr;
 
 		//Input Control
 		bool isShow = true;
@@ -106,6 +113,7 @@ namespace eae6320
 
 		void SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate) final;
 		void UpdateBasedOnInput() final;
+		void UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate) final;
 
 		// Initialize / Clean Up
 		//----------------------

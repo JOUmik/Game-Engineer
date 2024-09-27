@@ -152,6 +152,14 @@ void eae6320::Graphics::BindMeshWithEffect(Mesh*& mesh, Effect*& effect, const M
 	constantData_drawCalls.push_back(drawCall);
 }
 
+void eae6320::Graphics::BindCameraData(const Math::cMatrix_transformation& cameraToProjected, const Math::cMatrix_transformation& worldToCamera)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	auto& constantData_frame = s_dataBeingSubmittedByApplicationThread->constantData_frame;
+	constantData_frame.g_transform_cameraToProjected = cameraToProjected;
+	constantData_frame.g_transform_worldToCamera = worldToCamera;
+}
+
 // Render
 //-------
 

@@ -56,7 +56,6 @@ namespace eae6320
 			{
 				EAE6320_ASSERTF(false, "Can't draw actor because i_effect is nullptr");
 			}
-
 			eae6320::Graphics::BindMeshWithEffect(mesh, effect, rigidBodyState->PredictFutureTransform(i_elapsedSecondCount_sinceLastSimulationUpdate));
 		}
 	}
