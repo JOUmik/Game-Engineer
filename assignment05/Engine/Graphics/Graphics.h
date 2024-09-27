@@ -23,10 +23,16 @@
 
 namespace eae6320
 {
+	namespace Math
+	{
+		class cMatrix_transformation;
+	}
+
 	namespace Graphics
 	{
 		class Mesh;
 		class Effect;
+		
 		namespace VertexFormats
 		{
 			struct sVertex_mesh;
@@ -54,7 +60,7 @@ namespace eae6320
 		void CreateMesh(VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int vertexCount, unsigned int indexCount, Mesh*& o_mesh);
 		void CreateEffect(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, Effect*& o_effect);
 		void UpdateBackgroundColor(float r = 0.f, float g = 0.f, float b = 0.f, float a = 1.f);
-		void BindMeshWithEffect(Mesh*& mesh, Effect*& effect);
+		void BindMeshWithEffect(Mesh*& mesh, Effect*& effect, const Math::cMatrix_transformation& transformation);
 
 		// Render
 		//-------

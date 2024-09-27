@@ -19,7 +19,7 @@ namespace eae6320
 			void ChangeMesh(Mesh* new_mesh);
 			void ChangeEffect(Effect* new_effect);
 
-			void SubmitMeshWithEffectToDraw();
+			void SubmitMeshWithEffectToDraw(const float i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 		protected:
 			inline void SetMesh(Mesh* i_mesh) 

@@ -66,11 +66,11 @@ void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_s
 	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
 	
 
-	house->SubmitMeshWithEffectToDraw();
+	house->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 	if (isShow) 
 	{
-		chimney->SubmitMeshWithEffectToDraw();
+		chimney->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
 	}
 	
 }

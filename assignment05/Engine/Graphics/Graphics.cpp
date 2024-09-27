@@ -21,6 +21,7 @@
 #include <Engine/ScopeGuard/cScopeGuard.h>
 #include <Engine/Time/Time.h>
 #include <Engine/UserOutput/UserOutput.h>
+#include <Engine/Math/cMatrix_transformation.h>
 #include <new>
 #include <utility>
 #include <vector>
@@ -34,6 +35,7 @@ namespace
 
 	// Constant buffer object
 	eae6320::Graphics::cConstantBuffer s_constantBuffer_frame(eae6320::Graphics::ConstantBufferTypes::Frame);
+	eae6320::Graphics::cConstantBuffer s_constantBuffer_drawCall(eae6320::Graphics::ConstantBufferTypes::DrawCall);
 
 	// Submission Data
 	//----------------
@@ -49,6 +51,7 @@ namespace
 	struct sDataRequiredToRenderAFrame
 	{
 		eae6320::Graphics::ConstantBufferFormats::sFrame constantData_frame;
+		std::vector<eae6320::Graphics::ConstantBufferFormats::sDrawCall> constantData_drawCalls;
 		sColor backgroundColor;
 		std::vector<std::pair<eae6320::Graphics::Mesh*&, eae6320::Graphics::Effect*&>> meshEffectPairs;
 	};
@@ -121,7 +124,7 @@ void eae6320::Graphics::UpdateBackgroundColor(float r, float g, float b, float a
 	backgroundColor.a = a;
 }
 
-void eae6320::Graphics::BindMeshWithEffect(Mesh*& mesh, Effect*& effect)
+void eae6320::Graphics::BindMeshWithEffect(Mesh*& mesh, Effect*& effect, const Math::cMatrix_transformation& transformation)
 {
 	if (mesh == nullptr) 
 	{
@@ -135,12 +138,18 @@ void eae6320::Graphics::BindMeshWithEffect(Mesh*& mesh, Effect*& effect)
 	}
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	auto& meshEffectPairs = s_dataBeingSubmittedByApplicationThread->meshEffectPairs;
+	auto& constantData_drawCalls = s_dataBeingSubmittedByApplicationThread->constantData_drawCalls;
 	if (meshEffectPairs.size() > 99) 
 	{
 		EAE6320_ASSERTF(false, "the mesh number over the limitation, the limitation of mesh is 99");
 		Logging::OutputError("the mesh number over the limitation, the limitation of mesh is 99");
 	}
 	meshEffectPairs.emplace_back( mesh, effect );
+
+	//save transformation info to constantData_drawCalls
+	eae6320::Graphics::ConstantBufferFormats::sDrawCall drawCall;
+	drawCall.g_transform_localToWorld = transformation;
+	constantData_drawCalls.push_back(drawCall);
 }
 
 // Render
@@ -187,21 +196,14 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_frame.Update(&constantData_frame);
 	}
 
-	//// Bind the shading data
-	//effect01->BindShadingData();
-
-	//// Draw the geometry
-	//mesh01->Draw();
-
-	//// Bind the shading data
-	//effect02->BindShadingData();
-
-	//// Draw the geometry
-	//mesh02->Draw();
-	for (std::pair<eae6320::Graphics::Mesh*&, eae6320::Graphics::Effect*&> p : s_dataBeingRenderedByRenderThread->meshEffectPairs) 
+	auto& meshEffectPairs = s_dataBeingRenderedByRenderThread->meshEffectPairs;
+	auto& constantData_drawCalls = s_dataBeingRenderedByRenderThread->constantData_drawCalls;
+	for (size_t i = 0;  i < meshEffectPairs.size(); ++i) 
 	{
-		p.second->BindShadingData();
-		p.first->Draw();
+		//Update the draw call constant buffer
+		s_constantBuffer_drawCall.Update(&constantData_drawCalls[i]);
+		meshEffectPairs[i].second->BindShadingData();
+		meshEffectPairs[i].first->Draw();
 	}
 
 	view.SwapImageToFrontBuffer();
@@ -213,6 +215,7 @@ void eae6320::Graphics::RenderFrame()
 		// (At this point in the class there isn't anything that needs to be cleaned up)
 		//dataRequiredToRenderFrame	// TODO
 		s_dataBeingRenderedByRenderThread->meshEffectPairs.clear();
+		s_dataBeingRenderedByRenderThread->constantData_drawCalls.clear();
 	}
 }
 
@@ -242,6 +245,20 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 		else
 		{
 			EAE6320_ASSERTF(false, "Can't initialize Graphics without frame constant buffer");
+			return result;
+		}
+
+		if (result = s_constantBuffer_drawCall.Initialize())
+		{
+			// There is only a single frame constant buffer that is reused
+			// and so it can be bound at initialization time and never unbound
+			s_constantBuffer_drawCall.Bind(
+				// In our class both vertex and fragment shaders use per-frame constant data
+				static_cast<uint_fast8_t>(eShaderType::Vertex) | static_cast<uint_fast8_t>(eShaderType::Fragment));
+		}
+		else
+		{
+			EAE6320_ASSERTF(false, "Can't initialize Graphics without draw call constant buffer");
 			return result;
 		}
 	}
@@ -285,6 +302,18 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			if (result)
 			{
 				result = result_constantBuffer_frame;
+			}
+		}
+	}
+
+	{
+		const auto result_constantBuffer_drawCall = s_constantBuffer_drawCall.CleanUp();
+		if (!result_constantBuffer_drawCall)
+		{
+			EAE6320_ASSERT(false);
+			if (result)
+			{
+				result = result_constantBuffer_drawCall;
 			}
 		}
 	}

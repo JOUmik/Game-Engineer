@@ -1,6 +1,7 @@
 #include "cRenderableObject.h"
 #include "Graphics.h"
 
+#include <Engine/Math/cMatrix_transformation.h>
 namespace eae6320
 {
 	namespace Graphics
@@ -45,7 +46,7 @@ namespace eae6320
 			effect->IncrementReferenceCount();
 		}
 
-		void cRenderableObject::SubmitMeshWithEffectToDraw()
+		void cRenderableObject::SubmitMeshWithEffectToDraw(const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 		{
 			if (!mesh)
 			{
@@ -56,7 +57,7 @@ namespace eae6320
 				EAE6320_ASSERTF(false, "Can't draw actor because i_effect is nullptr");
 			}
 
-			eae6320::Graphics::BindMeshWithEffect(mesh, effect);
+			eae6320::Graphics::BindMeshWithEffect(mesh, effect, rigidBodyState->PredictFutureTransform(i_elapsedSecondCount_sinceLastSimulationUpdate));
 		}
 	}
 }

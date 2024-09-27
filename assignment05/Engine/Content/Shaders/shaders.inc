@@ -52,6 +52,11 @@ DeclareConstantBuffer(g_constantBuffer_frame, 0)
 	vec2 g_padding;
 };
 
+DeclareConstantBuffer(g_constantBuffer_drawCall, 2)
+{
+	mat4 g_transform_localToWorld;
+};
+
 //Functions
 //=========
 
