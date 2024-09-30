@@ -21,61 +21,6 @@
 
 // Run
 //----
-
-namespace 
-{
-	//mesh data
-	//---------
-	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData01[] =
-	{
-		//right - handed
-		{ -0.4f, -0.5f, 0.0f },
-		{  0.4f,  0.3f, 0.0f },
-		{  0.4f, -0.5f, 0.0f },
-		{ -0.4f,  0.3f, 0.0f },
-		{ -0.6f,  0.3f, 0.0f },
-		{  0.0f,  0.6f, 0.0f },
-		{  0.6f,  0.3f, 0.0f },
-	};
-
-	uint16_t indexData01[] =
-	{
-		0, 2, 1,
-		0, 1, 3,
-		4, 6, 5
-	};
-
-	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData02[] =
-	{
-		//right - handed
-		{  0.3f,  0.45f, 0.0f },
-		{  0.5f,  0.35f, 0.0f },
-		{  0.5f,  0.6f, 0.0f },
-		{  0.3f,  0.6f, 0.0f }
-	};
-
-	uint16_t indexData02[] =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	eae6320::Graphics::VertexFormats::sVertex_mesh vertexData03[] =
-	{
-		//right - handed
-		{  -0.4f,  -0.4f, 0.0f },
-		{  0.4f,  -0.4f, 0.0f },
-		{  0.4f,  0.4f, 0.0f },
-		{  -0.4f,  0.4f, 0.0f }
-	};
-
-	uint16_t indexData03[] =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-}
-
 void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
 	//animated background
@@ -295,9 +240,10 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	backgroundColor.r = 0.6f;
 	backgroundColor.g = 0.1f;
 	backgroundColor.b = 0.7f;
-	Graphics::CreateMesh(vertexData01, indexData01, 7, 9, mesh01);
-	Graphics::CreateMesh(vertexData02, indexData02, 4, 6, mesh02);
-	Graphics::CreateMesh(vertexData03, indexData03, 4, 6, mesh03);
+	//Graphics::CreateMesh(vertexData01, indexData01, 7, 9, mesh01);
+	Graphics::CreateMesh("data/Meshes/house.lua", mesh01);
+	Graphics::CreateMesh("data/Meshes/chimney.lua", mesh02);
+	Graphics::CreateMesh("data/Meshes/cube.lua", mesh03);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02);
 

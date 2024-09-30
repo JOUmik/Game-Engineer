@@ -8,7 +8,9 @@
 #endif // EAE6320_PLATFORM
 
 #include <Engine/Assets/ReferenceCountedAssets.h>
+#include <string>
 
+struct lua_State;
 namespace eae6320
 { 
     namespace Graphics 
@@ -50,6 +52,7 @@ namespace eae6320
 
             //factory mode
             static cResult Load(VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int vertexCount, unsigned int indexCount, Mesh*& o_mesh);
+            static cResult Load(const std::string& meshPath, Mesh*& o_mesh);
 
             void Draw();
 
@@ -60,6 +63,9 @@ namespace eae6320
             ~Mesh();
             void EnsureRightHandedIndexOrder(const VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int indexCount);
             eae6320::cResult InitializeGeometry(VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int vertexCount, unsigned int indexCount);
+            static eae6320::cResult LoadTableValues(lua_State& io_luaState, Graphics::VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int& vertexCount, unsigned int& indexCount);
+            static eae6320::cResult LoadTableValues_Vertex(lua_State& io_luaState, Graphics::VertexFormats::sVertex_mesh*& vertexData, unsigned int& vertexCount);
+            static eae6320::cResult LoadTableValues_Index(lua_State& io_luaState, uint16_t*& indexData, unsigned int& indexCount);
             cResult CleanUp();
         };
     }

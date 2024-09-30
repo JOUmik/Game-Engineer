@@ -7,6 +7,7 @@
 #include <Engine/Math/sVector.h>
 #include <Engine/ScopeGuard/cScopeGuard.h>
 #include <Engine/Concurrency/cMutex.h>
+#include <External/Lua/Includes.h>
 #include <new>
 #include <vector>
 
@@ -96,6 +97,231 @@ namespace eae6320
 
 			return result;
         }
+
+		cResult Mesh::Load(const std::string& meshPath, Mesh*& o_mesh)
+		{
+			auto result = eae6320::Results::Success;
+
+			// Create a new Lua state
+			lua_State* luaState = nullptr;
+			eae6320::cScopeGuard scopeGuard_onExit([&luaState]
+				{
+					if (luaState)
+					{
+						// If I haven't made any mistakes
+						// there shouldn't be anything on the stack
+						// regardless of any errors
+						EAE6320_ASSERT(lua_gettop(luaState) == 0);
+
+						lua_close(luaState);
+						luaState = nullptr;
+					}
+				});
+			{
+				luaState = luaL_newstate();
+				if (!luaState)
+				{
+					result = eae6320::Results::OutOfMemory;
+					eae6320::Logging::OutputError("Create mesh failed! Failed to create a new Lua state, mesh path: %s", meshPath.c_str());
+					return result;
+				}
+			}
+
+			// Load the asset file as a "chunk",
+			// meaning there will be a callable function at the top of the stack
+			const auto stackTopBeforeLoad = lua_gettop(luaState);
+			{
+				const auto luaResult = luaL_loadfile(luaState, meshPath.c_str());
+				if (luaResult != LUA_OK)
+				{
+					result = eae6320::Results::Failure;
+					eae6320::Logging::OutputError("Create mesh failed! %s", lua_tostring(luaState, -1));
+					// Pop the error message
+					lua_pop(luaState, 1);
+					return result;
+				}
+			}
+			// Execute the "chunk", which should load the asset
+			// into a table at the top of the stack
+			{
+				constexpr int argumentCount = 0;
+				constexpr int returnValueCount = LUA_MULTRET;	// Return _everything_ that the file returns
+				constexpr int noMessageHandler = 0;
+				const auto luaResult = lua_pcall(luaState, argumentCount, returnValueCount, noMessageHandler);
+				if (luaResult == LUA_OK)
+				{
+					// A well-behaved asset file will only return a single value
+					const auto returnedValueCount = lua_gettop(luaState) - stackTopBeforeLoad;
+					if (returnedValueCount == 1)
+					{
+						// A correct asset file _must_ return a table
+						if (!lua_istable(luaState, -1))
+						{
+							result = eae6320::Results::InvalidFile;
+							eae6320::Logging::OutputError("Create mesh failed! Asset files must return a table (instead of a %s)", luaL_typename(luaState, -1));
+							// Pop the returned non-table value
+							lua_pop(luaState, 1);
+							return result;
+						}
+					}
+					else
+					{
+						result = eae6320::Results::InvalidFile;
+						eae6320::Logging::OutputError("Create mesh failed! Asset files must return a single table (instead of a %s values)", returnedValueCount);
+						// Pop every value that was returned
+						lua_pop(luaState, returnedValueCount);
+						return result;
+					}
+				}
+				else
+				{
+					result = eae6320::Results::InvalidFile;
+					eae6320::Logging::OutputError("Create mesh failed! %s", lua_tostring(luaState, -1));
+					// Pop the error message
+					lua_pop(luaState, 1);
+					return result;
+				}
+			}
+
+			// If this code is reached the asset file was loaded successfully,
+			// and its table is now at index -1
+			eae6320::cScopeGuard scopeGuard_popAssetTable([luaState]
+				{
+					lua_pop(luaState, 1);
+				});
+
+			Graphics::VertexFormats::sVertex_mesh* vertexData = nullptr;
+			uint16_t* indexData = nullptr;
+			unsigned int vertexCount = 0;
+			unsigned int indexCount = 0;
+
+			if (result = LoadTableValues(*luaState, vertexData, indexData, vertexCount, indexCount))
+			{
+				result = Load(vertexData, indexData, vertexCount, indexCount, o_mesh);
+			}
+			if (vertexData != nullptr) 
+			{
+				delete[] vertexData;
+			}
+			if (indexData != nullptr) 
+			{
+				delete[] indexData;
+			}
+
+			return result;
+		}
+
+		eae6320::cResult Mesh::LoadTableValues(lua_State& io_luaState, Graphics::VertexFormats::sVertex_mesh*& vertexData, uint16_t*& indexData, unsigned int& vertexCount, unsigned int& indexCount)
+		{
+			auto result = eae6320::Results::Success;
+
+			if (!(result = LoadTableValues_Vertex(io_luaState, vertexData, vertexCount)))
+			{
+				return result;
+			}
+			if (!(result = LoadTableValues_Index(io_luaState, indexData, indexCount)))
+			{
+				return result;
+			}
+
+			return result;
+		}
+
+		eae6320::cResult Mesh::LoadTableValues_Vertex(lua_State& io_luaState, Graphics::VertexFormats::sVertex_mesh*& vertexData, unsigned int& vertexCount)
+		{
+			auto result = eae6320::Results::Success;
+			constexpr auto* const key = "vertex";
+
+			lua_pushstring(&io_luaState, key);
+			lua_gettable(&io_luaState, -2);
+
+			eae6320::cScopeGuard scopeGuard_popTextures([&io_luaState]
+				{
+					lua_pop(&io_luaState, 1);
+				});
+
+			if (lua_istable(&io_luaState, -1))
+			{
+				vertexCount = (unsigned int)luaL_len(&io_luaState, -1);
+				vertexData = new Graphics::VertexFormats::sVertex_mesh[vertexCount];
+
+				for (unsigned int i = 1; i <= vertexCount; ++i)
+				{
+					lua_pushinteger(&io_luaState, i);
+					lua_gettable(&io_luaState, -2);
+
+					eae6320::cScopeGuard scopeGuard_popTexturePath([&io_luaState]
+						{
+							lua_pop(&io_luaState, 1);
+						});
+
+					lua_pushinteger(&io_luaState, 1);
+					lua_gettable(&io_luaState, -2);
+					vertexData[i - 1].x = (float)lua_tonumber(&io_luaState, -1);
+					lua_pop(&io_luaState, 1);
+
+					lua_pushinteger(&io_luaState, 2);
+					lua_gettable(&io_luaState, -2);
+					vertexData[i - 1].y = (float)lua_tonumber(&io_luaState, -1);
+					lua_pop(&io_luaState, 1);
+
+					lua_pushinteger(&io_luaState, 3);
+					lua_gettable(&io_luaState, -2);
+					vertexData[i - 1].z = (float)lua_tonumber(&io_luaState, -1);
+					lua_pop(&io_luaState, 1);
+				}
+			}
+			else
+			{
+				result = eae6320::Results::InvalidFile;
+				eae6320::Logging::OutputError("Create mesh failed! The value at vertex must be a table (instead of a %s)", luaL_typename(&io_luaState, -1));
+				return result;
+			}
+
+			return result;
+		}
+
+		eae6320::cResult Mesh::LoadTableValues_Index(lua_State& io_luaState, uint16_t*& indexData, unsigned int& indexCount)
+		{
+			auto result = eae6320::Results::Success;
+			constexpr auto* const key = "index";
+
+			lua_pushstring(&io_luaState, key);
+			lua_gettable(&io_luaState, -2);
+
+			eae6320::cScopeGuard scopeGuard_popTextures([&io_luaState]
+				{
+					lua_pop(&io_luaState, 1);
+				});
+
+			if (lua_istable(&io_luaState, -1))
+			{
+				indexCount = (unsigned int)luaL_len(&io_luaState, -1);
+				indexData = new uint16_t[indexCount];
+
+				for (unsigned int i = 1; i <= indexCount; ++i)
+				{
+					lua_pushinteger(&io_luaState, i);
+					lua_gettable(&io_luaState, -2);
+
+					eae6320::cScopeGuard scopeGuard_popTexturePath([&io_luaState]
+						{
+							lua_pop(&io_luaState, 1);
+						});
+
+					indexData[i - 1] = (uint16_t)lua_tonumber(&io_luaState, -1);
+				}
+			}
+			else
+			{
+				result = eae6320::Results::InvalidFile;
+				eae6320::Logging::OutputError("Create mesh failed! The value at index must be a table (instead of a %s)", luaL_typename(&io_luaState, -1));
+				return result;
+			}
+
+			return result;
+		}
+
         void Mesh::EnsureRightHandedIndexOrder(const VertexFormats::sVertex_mesh* vertexData, uint16_t* indexData, unsigned int indexCount)
         {
             // Iterate through each triangle (3 indices per triangle)

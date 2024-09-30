@@ -106,6 +106,14 @@ void eae6320::Graphics::CreateMesh(VertexFormats::sVertex_mesh* vertexData, uint
 	}
 }
 
+void eae6320::Graphics::CreateMesh(const std::string& meshPath, Mesh*& o_mesh)
+{
+	if (!Mesh::Load(meshPath, o_mesh))
+	{
+		EAE6320_ASSERTF(false, "Can't initialize Graphics without the geometry data");
+	}
+}
+
 void eae6320::Graphics::CreateEffect(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, Effect*& o_effect)
 {
 	if (!Effect::Load(vertexShaderPath, fragmentShaderPath, o_effect))

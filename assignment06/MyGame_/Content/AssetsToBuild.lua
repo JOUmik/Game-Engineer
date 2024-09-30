@@ -12,6 +12,8 @@ return
 		{ path = "Shaders/Vertex/vertexInputLayout_mesh.shader", arguments = { "vertex" } },
 	},
 	meshes = {
-		{ path = "Meshes/House.lua" },
+		{ path = "Meshes/house.lua" },
+		{ path = "Meshes/cube.lua" },
+		{ path = "Meshes/chimney.lua" },
 	}
 }
