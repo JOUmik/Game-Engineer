@@ -30,6 +30,11 @@ void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_s
 	float b = (-std::cos(5.0f * simulateTime) * 0.2f) + 0.25f;
 	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
 	
+	// Player Controller send the binded camera date to graphics
+	{
+		playerController->SubmitDataToGraphics(i_elapsedSecondCount_sinceLastSimulationUpdate);
+	}
+
 	//Draw Actors
 	{
 		plain->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
@@ -39,11 +44,6 @@ void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_s
 		{
 			chimney->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
 		}
-	}
-
-	// Player Controller send the binded camera date to graphics
-	{
-		playerController->SubmitDataToGraphics(i_elapsedSecondCount_sinceLastSimulationUpdate);
 	}
 }
 

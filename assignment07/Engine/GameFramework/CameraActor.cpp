@@ -15,8 +15,8 @@ namespace eae6320
             //init camera data
             verticalFieldOfView_inRadians = eae6320::Math::ConvertDegreesToRadians(45.f);
             aspectRatio = 1.f;
-            z_nearPlane = 0.f;
-            z_farPlane = 20.f;
+            z_nearPlane = 0.1f;
+            z_farPlane = 100.f;
             rigidBodyState->position = Math::sVector(0.f, 0.f, 10.f);
         }
 
