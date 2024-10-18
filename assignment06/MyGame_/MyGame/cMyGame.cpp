@@ -32,6 +32,7 @@ void eae6320::cMyGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_s
 	
 	//Draw Actors
 	{
+		plain->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
 		house->SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 		if (isShow)
@@ -244,6 +245,7 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	Graphics::CreateMesh("data/Meshes/house.lua", mesh01);
 	Graphics::CreateMesh("data/Meshes/chimney.lua", mesh02);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh03);
+	Graphics::CreateMesh("data/Meshes/plain.lua", mesh04);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02);
 
@@ -253,6 +255,7 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	//Actor
 	house = new eae6320::GameFramework::AActor(mesh01, effect01);
 	chimney = new eae6320::GameFramework::AActor(mesh02, effect02);
+	plain = new eae6320::GameFramework::AActor(mesh04, effect02);
 
 	//Camera
 	camera = new eae6320::GameFramework::ACameraActor();
@@ -268,6 +271,7 @@ eae6320::cResult eae6320::cMyGame::CleanUp()
 {
 	house->CleanUp();
 	chimney->CleanUp();
+	plain->CleanUp();
 	camera->CleanUp();
 	delete house;
 	delete chimney;
@@ -277,6 +281,7 @@ eae6320::cResult eae6320::cMyGame::CleanUp()
 	mesh01->DecrementReferenceCount();
 	mesh02->DecrementReferenceCount();
 	mesh03->DecrementReferenceCount();
+	mesh04->DecrementReferenceCount();
 	effect01->DecrementReferenceCount();
 	effect02->DecrementReferenceCount();
 	return Results::Success;

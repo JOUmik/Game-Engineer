@@ -15,5 +15,6 @@ return
 		{ path = "Meshes/house.lua" },
 		{ path = "Meshes/cube.lua" },
 		{ path = "Meshes/chimney.lua" },
+		{ path = "Meshes/plain.lua" },
 	}
 }
