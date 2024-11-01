@@ -10,6 +10,7 @@
 #include <External/Lua/Includes.h>
 #include <new>
 #include <vector>
+#include <chrono>
 
 namespace
 {
@@ -102,6 +103,7 @@ namespace eae6320
 		{
 			auto result = eae6320::Results::Success;
 
+			auto tick_before = std::chrono::high_resolution_clock::now();
 			// Create a new Lua state
 			lua_State* luaState = nullptr;
 			eae6320::cScopeGuard scopeGuard_onExit([&luaState]
@@ -197,6 +199,10 @@ namespace eae6320
 
 			if (result = LoadTableValues(*luaState, vertexData, indexData, vertexCount, indexCount))
 			{
+				auto tick_after = std::chrono::high_resolution_clock::now();
+				auto second = std::chrono::duration_cast<std::chrono::microseconds>(tick_after - tick_before);
+
+				Logging::OutputMessage("Time used to load binary file:\n %s\n %d (ms)", meshPath.c_str(), second.count());
 				result = Load(vertexData, indexData, vertexCount, indexCount, o_mesh);
 			}
 			if (vertexData != nullptr) 
