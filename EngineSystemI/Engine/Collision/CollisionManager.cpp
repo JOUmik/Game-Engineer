@@ -5,6 +5,11 @@ eae6320::Collision::CollisionManager::CollisionManager(){}
 
 eae6320::Collision::CollisionManager::~CollisionManager(){}
 
+void eae6320::Collision::CollisionManager::AddCollisionComponent(BaseCollisionComponent& comp)
+{
+	collisionComponentSet.insert(comp);
+}
+
 void eae6320::Collision::CollisionManager::CheckAndBroadcast_OnHit(BaseCollisionComponent& compA, BaseCollisionComponent& compB)
 {
 	CollisionPair pair{ &compA, &compB };
@@ -17,6 +22,18 @@ void eae6320::Collision::CollisionManager::CheckAndBroadcast_OnHit(BaseCollision
 		//broadcast
 		compA.OnHit(compB);
 		compB.OnHit(compA);
+	}
+}
+
+void eae6320::Collision::CollisionManager::CheckAndBroadcast_OnBeginOverlap(BaseCollisionComponent& compA, BaseCollisionComponent& compB)
+{
+	CollisionPair pair{ &compA, &compB };
+	currentOverlaps.insert(pair);
+
+	// if the pair not in the previousOverlaps, it means they have just overlapped with each other
+	if (previousOverlaps.find(pair) == previousOverlaps.end()) {
+		compA.OnBeginOverlap(compB);
+		compB.OnBeginOverlap(compA);
 	}
 }
 
