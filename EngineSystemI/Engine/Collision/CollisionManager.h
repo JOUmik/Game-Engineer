@@ -8,8 +8,8 @@ namespace eae6320
     namespace Collision
     {
         struct CollisionPair {
-            void* componentA;
-            void* componentB;
+            BaseCollisionComponent* componentA;
+            BaseCollisionComponent* componentB;
 
             bool operator==(const CollisionPair& other) const {
                 return (componentA == other.componentA && componentB == other.componentB) ||
@@ -38,20 +38,26 @@ namespace eae6320
             //If the collision between compA and compB is not handled before in current frame, this function would call 
             void CheckAndBroadcast_OnHit(BaseCollisionComponent& compA, BaseCollisionComponent& compB);
             void CheckAndBroadcast_OnBeginOverlap(BaseCollisionComponent& compA, BaseCollisionComponent& compB);
-            void CheckAndBroadcast_OnEndOverlap();
+            void CheckAndBroadcast_OnEndOverlap(BaseCollisionComponent& compA, BaseCollisionComponent& compB);
+            void PerformMovementAndHitDetection();
+            void PerformOverlapDetection();
             static CollisionManager* GetCollisionManager();
             void Update();
             void Destroy();
 
         private:
             static CollisionManager* collisionManager;
-            std::unordered_set<CollisionPair, CollisionPairHash> collisionCache;
+            std::unordered_set<CollisionPair, CollisionPairHash> hitCache;
+            std::unordered_set<CollisionPair, CollisionPairHash> overlapBeginCache;
+            std::unordered_set<CollisionPair, CollisionPairHash> overlapEndCache;
             std::unordered_set<CollisionPair, CollisionPairHash> currentOverlaps;
             std::unordered_set<CollisionPair, CollisionPairHash> previousOverlaps;
             CollisionManager();
             ~CollisionManager();
 
             void ClearCache();
+            Math::sVector Lerp(const Math::sVector& start, const Math::sVector& end, float t);
+            Math::sVector PerformBinarySearch(const Math::sVector& start, const Math::sVector& end, float low, float high, BaseCollisionComponent& comp);
         };
     }
 }

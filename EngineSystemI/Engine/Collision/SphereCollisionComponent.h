@@ -11,7 +11,7 @@ namespace eae6320
             SphereCollisionComponent();
             ~SphereCollisionComponent();
 
-            virtual void CheckCollision();
+            virtual void CheckOverlap();
             virtual bool DetectCollision(BaseCollisionComponent& otherComp);
 
             inline float GetRadius() const { return radius; }

@@ -11,7 +11,7 @@ namespace eae6320
             BoxCollisionComponent();
             ~BoxCollisionComponent();
 
-            virtual void CheckCollision();
+            virtual void CheckOverlap();
             virtual bool DetectCollision(BaseCollisionComponent& otherComp);
 
             inline Math::sVector GetExtend() const { return extend; }

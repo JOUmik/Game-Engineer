@@ -4,16 +4,16 @@
 
 eae6320::Collision::SphereCollisionComponent::SphereCollisionComponent()
 {
-    collisionType = CollisionType::Sphere;
+    collisionShape = CollisionShape::Sphere;
 }
 
 eae6320::Collision::SphereCollisionComponent::~SphereCollisionComponent()
 {
 }
 
-void eae6320::Collision::SphereCollisionComponent::CheckCollision()
+void eae6320::Collision::SphereCollisionComponent::CheckOverlap()
 {
-    BaseCollisionComponent::CheckCollision();
+    BaseCollisionComponent::CheckOverlap();
     std::unordered_set<BaseCollisionComponent&> collisionComponentSet = CollisionManager::GetCollisionManager()->collisionComponentSet;
     for (BaseCollisionComponent& collisionComp : collisionComponentSet)
     {
@@ -21,7 +21,13 @@ void eae6320::Collision::SphereCollisionComponent::CheckCollision()
         if (&collisionComp == this) continue;
         if (DetectCollision(collisionComp))
         {
-            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnHit(*this, collisionComp);
+            //If collision is detected, it may be ok to broadcast BeginOverlap event
+            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnBeginOverlap(*this, collisionComp);
+        }
+        else
+        {
+            //If collision is not detected, it may be ok to broadcast EndOverlap event
+            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnEndOverlap(*this, collisionComp);
         }
     }
 
@@ -29,7 +35,7 @@ void eae6320::Collision::SphereCollisionComponent::CheckCollision()
 
 bool eae6320::Collision::SphereCollisionComponent::DetectCollision(BaseCollisionComponent& otherComp)
 {
-    if (otherComp.GetCollisionType() == CollisionType::Box)
+    if (otherComp.GetCollisionShape() == CollisionShape::Box)
     {
         const auto& otherBox = dynamic_cast<const BoxCollisionComponent&>(otherComp);
         Math::sVector min = otherBox.GetPosition() - otherBox.GetExtend();
@@ -45,7 +51,7 @@ bool eae6320::Collision::SphereCollisionComponent::DetectCollision(BaseCollision
             return true;
         }
     }
-    else if (otherComp.GetCollisionType() == CollisionType::Sphere)
+    else if (otherComp.GetCollisionShape() == CollisionShape::Sphere)
     {
         const auto& otherSphere = dynamic_cast<const SphereCollisionComponent&>(otherComp);
         float combinedRadius = radius + otherSphere.GetRadius();

@@ -15,11 +15,24 @@ namespace eae6320
             std::string OtherComponentName;
         };
 
-        enum class CollisionType
+        enum class CollisionShape
         {
             None,
             Box,
             Sphere
+        };
+
+        enum class CollisionComponentType
+        {
+            Static,
+            Dynamic
+        };
+
+        enum class CollisionEvent 
+        {
+            NoCollision,
+            Overlap,
+            Collision
         };
 
         class BaseCollisionComponent
@@ -28,8 +41,9 @@ namespace eae6320
             Delegate<const BaseCollisionComponent&> OnComponentHit;
             Delegate<const BaseCollisionComponent&> OnComponentBeginOverlap;
             Delegate<const BaseCollisionComponent&> OnComponentEndOverlap;
+            Delegate<const Math::sVector&> UpdatePositionAfterCollision;
 
-            virtual void CheckCollision() {}
+            virtual void CheckOverlap() {}
 
             void OnHit(const BaseCollisionComponent& other)
             {
@@ -49,20 +63,34 @@ namespace eae6320
                 OnComponentEndOverlap.Broadcast(other);
             }
 
+            void UpdateActorPostion(const Math::sVector& pos) 
+            {
+                UpdatePositionAfterCollision.Broadcast(pos);
+            }
+
             virtual bool DetectCollision(BaseCollisionComponent& other) {};
 
             //This function would set the targetPosition of component to i_targetPosition, but you still need to 
-            void TryMoveTo(Math::sVector i_targetPosition) { targetPosition = i_targetPosition; }
+            void TryMoveTo(Math::sVector i_targetPosition) 
+            { 
+                targetPosition = i_targetPosition;
+                bIsMoving = true;
+            }
 
             void EnableHitEvent(bool enable = true) { bHitEventEnabled = enable; }
             void EnableOverlapEvent(bool enable = true) { bOverlapEventEnabled = enable; }
             inline bool IsHitEventEnabled() const { return bHitEventEnabled; }
             inline bool IsOverlapEventEnabled() const { return bOverlapEventEnabled; }
+            inline void SetPosition(Math::sVector i_position) { position = i_position; }
             inline Math::sVector GetPosition() const { return position;  }
-            inline CollisionType GetCollisionType() const { return collisionType; }
+            inline Math::sVector GetTargetPosition() const { return targetPosition; }
+            inline CollisionShape GetCollisionShape() const { return collisionShape; }
+            inline CollisionComponentType GetCollisionComponentType() const { return collisionComponentType; }
 
+            bool bIsMoving = false;
         protected:
-            CollisionType collisionType = CollisionType::None;
+            CollisionShape collisionShape = CollisionShape::None;
+            CollisionComponentType collisionComponentType = CollisionComponentType::Static;
             Math::sVector position = Math::sVector();
             Math::sVector targetPosition = Math::sVector();
 

@@ -4,16 +4,16 @@
 
 eae6320::Collision::BoxCollisionComponent::BoxCollisionComponent()
 {
-    collisionType = CollisionType::Box;
+    collisionShape = CollisionShape::Box;
 }
 
 eae6320::Collision::BoxCollisionComponent::~BoxCollisionComponent()
 {
 }
 
-void eae6320::Collision::BoxCollisionComponent::CheckCollision()
+void eae6320::Collision::BoxCollisionComponent::CheckOverlap()
 {
-    BaseCollisionComponent::CheckCollision();
+    BaseCollisionComponent::CheckOverlap();
     std::unordered_set<BaseCollisionComponent&> collisionComponentSet = CollisionManager::GetCollisionManager()->collisionComponentSet;
     for (BaseCollisionComponent& collisionComp : collisionComponentSet) 
     {
@@ -21,14 +21,20 @@ void eae6320::Collision::BoxCollisionComponent::CheckCollision()
         if (&collisionComp == this) continue;
         if (DetectCollision(collisionComp)) 
         {
-            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnHit(*this, collisionComp);
+            //If collision is detected, it may be ok to broadcast BeginOverlap event
+            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnBeginOverlap(*this, collisionComp);
+        }
+        else 
+        {
+            //If collision is not detected, it may be ok to broadcast EndOverlap event
+            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnEndOverlap(*this, collisionComp);
         }
     }
 }
 
 bool eae6320::Collision::BoxCollisionComponent::DetectCollision(BaseCollisionComponent& otherComp)
 {
-    if (otherComp.GetCollisionType() == CollisionType::Box)
+    if (otherComp.GetCollisionShape() == CollisionShape::Box)
     {
         const BoxCollisionComponent& otherBox = dynamic_cast<const BoxCollisionComponent&>(otherComp);
         if ((std::abs(position.x - otherBox.GetPosition().x) <= (extend.x + otherBox.GetExtend().x)) &&
@@ -38,7 +44,7 @@ bool eae6320::Collision::BoxCollisionComponent::DetectCollision(BaseCollisionCom
             return true;
         }
     }
-    else if (otherComp.GetCollisionType() == CollisionType::Sphere)
+    else if (otherComp.GetCollisionShape() == CollisionShape::Sphere)
     {
         const auto& otherSphere = dynamic_cast<const SphereCollisionComponent&>(otherComp);
         Math::sVector min = position - extend;
