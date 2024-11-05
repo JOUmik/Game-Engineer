@@ -15,6 +15,11 @@ public:
         callbacks.push_back(callback);
     }
 
+    template<typename T>
+    void Add(T* instance, void (T::* memberFunction)(Args...)) {
+        callbacks.push_back([=](Args... args) { (instance->*memberFunction)(args...); });
+    }
+
     void RemoveAll() 
     {
         callbacks.clear();

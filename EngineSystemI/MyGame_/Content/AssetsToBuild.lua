@@ -8,6 +8,10 @@ return
 	{
 		{ path = "Shaders/Vertex/standard.shader", arguments = { "vertex" } },
 		{ path = "Shaders/Fragment/standard.shader", arguments = { "fragment" } },
+		{ path = "Shaders/Fragment/Green.shader", arguments = { "fragment" } },
+		{ path = "Shaders/Fragment/Red.shader", arguments = { "fragment" } },
+		{ path = "Shaders/Fragment/Oriange.shader", arguments = { "fragment" } },
+		{ path = "Shaders/Fragment/Gray.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/animatedColor.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Vertex/vertexInputLayout_mesh.shader", arguments = { "vertex" } },
 	},

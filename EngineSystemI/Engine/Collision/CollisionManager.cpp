@@ -1,5 +1,7 @@
 #include "CollisionManager.h"
 
+eae6320::Collision::CollisionManager* eae6320::Collision::CollisionManager::collisionManager = nullptr;
+
 eae6320::Collision::CollisionManager::CollisionManager(){}
 
 
@@ -7,7 +9,12 @@ eae6320::Collision::CollisionManager::~CollisionManager(){}
 
 void eae6320::Collision::CollisionManager::AddCollisionComponent(BaseCollisionComponent& comp)
 {
-	collisionComponentSet.insert(comp);
+	collisionComponentSet.insert(&comp);
+}
+
+void eae6320::Collision::CollisionManager::RemoveCollisionComponent(BaseCollisionComponent& comp)
+{
+	collisionComponentSet.erase(&comp);
 }
 
 void eae6320::Collision::CollisionManager::CheckAndBroadcast_OnHit(BaseCollisionComponent& compA, BaseCollisionComponent& compB)
@@ -46,7 +53,7 @@ void eae6320::Collision::CollisionManager::CheckAndBroadcast_OnEndOverlap(BaseCo
 {
 	CollisionPair pair{ &compA, &compB };
 
-	if (overlapEndCache.find(pair) == overlapBeginCache.end())
+	if (overlapEndCache.find(pair) == overlapEndCache.end())
 	{
 		overlapEndCache.insert(pair);
 
@@ -89,10 +96,10 @@ void eae6320::Collision::CollisionManager::Update()
 	for (auto& comp : collisionComponentSet) 
 	{
 		// only update the dynamic components that are moving in this update
-		if (comp.GetCollisionComponentType() != CollisionComponentType::Dynamic || !comp.bIsMoving) continue;
+		if (comp->GetCollisionComponentType() != CollisionComponentType::Dynamic || !comp->bIsMoving) continue;
 
-		Math::sVector startPosition = comp.GetPosition();
-		Math::sVector endPosition = comp.GetTargetPosition();
+		Math::sVector startPosition = comp->GetPosition();
+		Math::sVector endPosition = comp->GetTargetPosition();
 
 		bool hitOccurred = false;
 
@@ -100,37 +107,37 @@ void eae6320::Collision::CollisionManager::Update()
 		for (float t = 0; t <= 1; t += step)
 		{
 			Math::sVector interpolatedPosition = Lerp(startPosition, endPosition, t);
-			comp.SetPosition(interpolatedPosition);
+			comp->SetPosition(interpolatedPosition);
 
 			for (auto& otherComp : collisionComponentSet) 
 			{
 				if (&comp == &otherComp) continue;
 
-				bool isColliding = comp.DetectCollision(otherComp);
+				bool isColliding = comp->DetectCollision(*otherComp);
 
 				// Handle hit event
-				if (comp.IsHitEventEnabled() && otherComp.IsHitEventEnabled() && isColliding) 
+				if (comp->IsHitEventEnabled() && otherComp->IsHitEventEnabled() && isColliding) 
 				{
-					CollisionPair pair{ &comp, &otherComp };
+					CollisionPair pair{ comp, otherComp };
 					hitOccurred = true;
 
 					// prevent repeated handle
-					CheckAndBroadcast_OnHit(comp, otherComp);
+					CheckAndBroadcast_OnHit(*comp, *otherComp);
 					break;
 				}
 
 				// Handle overlap event	
 				// to generate overlap event, the collision event relation should be overlap -- overlap, overlap -- hit, or hit -- overlap
-				if (comp.IsOverlapEventEnabled() && otherComp.IsOverlapEventEnabled() && (!comp.IsHitEventEnabled() || !otherComp.IsHitEventEnabled())) 
+				if (comp->IsOverlapEventEnabled() && otherComp->IsOverlapEventEnabled() && (!comp->IsHitEventEnabled() || !otherComp->IsHitEventEnabled())) 
 				{
 					if (isColliding)
 					{
-						CheckAndBroadcast_OnBeginOverlap(comp, otherComp);
+						CheckAndBroadcast_OnBeginOverlap(*comp, *otherComp);
 						
 					}
 					else
 					{
-						CheckAndBroadcast_OnEndOverlap(comp, otherComp);
+						CheckAndBroadcast_OnEndOverlap(*comp, *otherComp);
 						
 					}
 				}
@@ -138,10 +145,10 @@ void eae6320::Collision::CollisionManager::Update()
 
 			if (hitOccurred) 
 			{
-				Math::sVector safePosition = PerformBinarySearch(startPosition, endPosition, std::max(t - step, 0.f), t, comp);
-				comp.SetPosition(safePosition);
+				Math::sVector safePosition = PerformBinarySearch(startPosition, endPosition, std::max(t - step, 0.f), t, *comp);
+				comp->SetPosition(safePosition);
 				//Update and synchronize location to the actor the collision component bind with
-				comp.UpdateActorPostion(safePosition);
+				comp->UpdateActorPostion(safePosition);
 				break;
 			}
 		}
@@ -149,11 +156,11 @@ void eae6320::Collision::CollisionManager::Update()
 		if (!hitOccurred) 
 		{
 			//Update and synchronize location to the actor the collision component bind with
-			comp.UpdateActorPostion(endPosition);
+			comp->UpdateActorPostion(endPosition);
 		}
 		
 		// comp's movement has been updated
-		comp.bIsMoving = false;
+		comp->bIsMoving = false;
 	}
 
 	// update overlap cache
@@ -187,9 +194,9 @@ eae6320::Math::sVector eae6320::Collision::CollisionManager::PerformBinarySearch
 
 		bool hasCollision = false;
 		for (auto& otherComp : collisionComponentSet) {
-			if (&comp == &otherComp) continue;
+			if (&comp == otherComp) continue;
 
-			if (comp.DetectCollision(otherComp)) {
+			if (comp.DetectCollision(*otherComp)) {
 				hasCollision = true;
 				break;
 			}

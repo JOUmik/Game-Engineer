@@ -26,6 +26,7 @@
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="CameraActor.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PlayerController.h" />
   </ItemGroup>

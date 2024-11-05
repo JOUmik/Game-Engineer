@@ -32,9 +32,10 @@ namespace eae6320
             CollisionManager& operator=(const CollisionManager& p) = delete;
             
 
-            std::unordered_set<BaseCollisionComponent&> collisionComponentSet;
+            std::unordered_set<BaseCollisionComponent*> collisionComponentSet;
 
             void AddCollisionComponent(BaseCollisionComponent& comp);
+            void RemoveCollisionComponent(BaseCollisionComponent& comp);
             //If the collision between compA and compB is not handled before in current frame, this function would call 
             void CheckAndBroadcast_OnHit(BaseCollisionComponent& compA, BaseCollisionComponent& compB);
             void CheckAndBroadcast_OnBeginOverlap(BaseCollisionComponent& compA, BaseCollisionComponent& compB);

@@ -18,6 +18,11 @@ namespace eae6320
 			rigidBodyState = new eae6320::Physics::sRigidBodyState();
 		}
 
+		void AActor::SetPosition(Math::sVector i_Position) 
+		{
+			rigidBodyState->position = i_Position;
+		}
+
 		AActor::~AActor(){}
 
 		void AActor::CleanUp()

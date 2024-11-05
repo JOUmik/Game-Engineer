@@ -46,6 +46,19 @@ namespace eae6320
 			effect->IncrementReferenceCount();
 		}
 
+		void cRenderableObject::SubmitMeshWithEffectToDraw() 
+		{
+			if (!mesh)
+			{
+				EAE6320_ASSERTF(false, "Can't draw actor because i_mesh is nullptr");
+			}
+			if (!effect)
+			{
+				EAE6320_ASSERTF(false, "Can't draw actor because i_effect is nullptr");
+			}
+			eae6320::Graphics::BindMeshWithEffect(mesh, effect, Math::cMatrix_transformation(rigidBodyState->orientation, rigidBodyState->position));
+		}
+
 		void cRenderableObject::SubmitMeshWithEffectToDraw(const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 		{
 			if (!mesh)

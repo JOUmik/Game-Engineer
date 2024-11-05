@@ -19,6 +19,10 @@ namespace eae6320
 			void ChangeMesh(Mesh* new_mesh);
 			void ChangeEffect(Effect* new_effect);
 
+			//Draw the mesh with current orientation and position
+			void SubmitMeshWithEffectToDraw();
+
+			//Draw the mesh with predicted orientation and position
 			void SubmitMeshWithEffectToDraw(const float i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 		protected:

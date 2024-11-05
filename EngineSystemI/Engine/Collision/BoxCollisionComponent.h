@@ -14,6 +14,7 @@ namespace eae6320
             virtual void CheckOverlap();
             virtual bool DetectCollision(BaseCollisionComponent& otherComp);
 
+            inline void SetExtend(Math::sVector i_extend) { extend = i_extend; }
             inline Math::sVector GetExtend() const { return extend; }
 
         protected:

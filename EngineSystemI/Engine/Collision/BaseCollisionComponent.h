@@ -32,7 +32,7 @@ namespace eae6320
         {
             NoCollision,
             Overlap,
-            Collision
+            Hit
         };
 
         class BaseCollisionComponent
@@ -68,7 +68,7 @@ namespace eae6320
                 UpdatePositionAfterCollision.Broadcast(pos);
             }
 
-            virtual bool DetectCollision(BaseCollisionComponent& other) {};
+            virtual bool DetectCollision(BaseCollisionComponent& other) { return true; };
 
             //This function would set the targetPosition of component to i_targetPosition, but you still need to 
             void TryMoveTo(Math::sVector i_targetPosition) 
@@ -77,10 +77,10 @@ namespace eae6320
                 bIsMoving = true;
             }
 
-            void EnableHitEvent(bool enable = true) { bHitEventEnabled = enable; }
-            void EnableOverlapEvent(bool enable = true) { bOverlapEventEnabled = enable; }
-            inline bool IsHitEventEnabled() const { return bHitEventEnabled; }
-            inline bool IsOverlapEventEnabled() const { return bOverlapEventEnabled; }
+            inline void SetCollisionEvent(CollisionEvent i_collisionEvent = CollisionEvent::Hit) { collisionEvent = i_collisionEvent; }
+            inline void SetCollisionComponentType(CollisionComponentType i_collisionComponentType = CollisionComponentType::Static) { collisionComponentType = i_collisionComponentType; }
+            inline bool IsHitEventEnabled() const { return collisionEvent >= CollisionEvent::Hit; }
+            inline bool IsOverlapEventEnabled() const { return collisionEvent >= CollisionEvent::Overlap;}
             inline void SetPosition(Math::sVector i_position) { position = i_position; }
             inline Math::sVector GetPosition() const { return position;  }
             inline Math::sVector GetTargetPosition() const { return targetPosition; }
@@ -91,10 +91,11 @@ namespace eae6320
         protected:
             CollisionShape collisionShape = CollisionShape::None;
             CollisionComponentType collisionComponentType = CollisionComponentType::Static;
+            CollisionEvent collisionEvent = CollisionEvent::Hit;
             Math::sVector position = Math::sVector();
             Math::sVector targetPosition = Math::sVector();
 
-        protected:
+        private:
             bool bHitEventEnabled = true;
             bool bOverlapEventEnabled = true;
         };

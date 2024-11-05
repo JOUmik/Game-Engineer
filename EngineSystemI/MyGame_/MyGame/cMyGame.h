@@ -45,6 +45,9 @@ namespace eae6320
 		class Effect;
 	}
 
+	class AHitTestActor;
+	class AOverlapBeginTestActor;
+	class AOverlapEndTestActor;
 	class cMyGame final : public Application::iApplication
 	{
 	public:
@@ -55,14 +58,19 @@ namespace eae6320
 		Graphics::Mesh* mesh04 = nullptr;
 		Graphics::Effect* effect01 = nullptr;
 		Graphics::Effect* effect02 = nullptr;
+		Graphics::Effect* effect03 = nullptr;
+		Graphics::Effect* effect04 = nullptr;
+		Graphics::Effect* effect05 = nullptr;
+		Graphics::Effect* effect06 = nullptr;
 
 		//Player Controller
 		eae6320::GameFramework::APlayerController* playerController = nullptr;
 
 		//Actors
-		eae6320::GameFramework::AActor* house = nullptr;
-		eae6320::GameFramework::AActor* chimney = nullptr;
-		eae6320::GameFramework::AActor* plain = nullptr;
+		eae6320::AHitTestActor* controlledActor = nullptr;
+		eae6320::AHitTestActor* hitTestActor = nullptr;
+		eae6320::AOverlapBeginTestActor* overlapBeginActor = nullptr;
+		eae6320::AOverlapEndTestActor* overlapEndActor = nullptr;
 
 		//Cameras
 		eae6320::GameFramework::ACameraActor* camera = nullptr;

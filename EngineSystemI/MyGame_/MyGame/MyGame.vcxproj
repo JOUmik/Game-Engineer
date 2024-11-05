@@ -28,11 +28,17 @@
     <ResourceCompile Include="Resource Files\MyGame.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actors\HitTestActor.h" />
+    <ClInclude Include="Actors\OverlapBeginTestActor.h" />
+    <ClInclude Include="Actors\OverlapEndTestActor.h" />
     <ClInclude Include="cMyGame.h" />
     <ClInclude Include="Resource Files\Resource.h" />
     <ClInclude Include="Resource Files\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actors\HitTestActor.cpp" />
+    <ClCompile Include="Actors\OverlapBeginTestActor.cpp" />
+    <ClCompile Include="Actors\OverlapEndTestActor.cpp" />
     <ClCompile Include="cMyGame.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
   </ItemGroup>
@@ -42,6 +48,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Engine\Asserts\Asserts.vcxproj">
       <Project>{464a6551-fca9-4027-bd9e-2b26914782ab}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Engine\Collision\Collision.vcxproj">
+      <Project>{5ac3a344-76bb-405e-9a00-bf61b9510e30}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Engine\GameFramework\GameFramework.vcxproj">
       <Project>{4694bfe9-7cb1-4dbf-b57c-3c4f603405c1}</Project>
