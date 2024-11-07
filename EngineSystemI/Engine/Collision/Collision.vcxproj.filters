@@ -41,5 +41,8 @@
     <ClInclude Include="CollisionManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="BVHNode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

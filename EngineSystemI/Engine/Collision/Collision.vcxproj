@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="BaseCollisionComponent.h" />
     <ClInclude Include="BoxCollisionComponent.h" />
+    <ClInclude Include="BVHNode.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Delegate.h" />
     <ClInclude Include="SphereCollisionComponent.h" />

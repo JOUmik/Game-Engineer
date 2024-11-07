@@ -264,6 +264,9 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	overlapBeginActor->Begin();
 	overlapEndActor->Begin();
 
+	//Call CollisionManager::Begin to build BVH
+	Collision::CollisionManager::GetCollisionManager()->Begin();
+
 	//Camera
 	camera = new eae6320::GameFramework::ACameraActor();
 	camera->SetPosition(Math::sVector(0, 0, 15.f));

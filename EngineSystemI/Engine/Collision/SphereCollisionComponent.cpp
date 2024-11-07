@@ -11,26 +11,12 @@ eae6320::Collision::SphereCollisionComponent::~SphereCollisionComponent()
 {
 }
 
-void eae6320::Collision::SphereCollisionComponent::CheckOverlap()
+eae6320::Collision::BoundingBox eae6320::Collision::SphereCollisionComponent::GetBoundingBox() const
 {
-    BaseCollisionComponent::CheckOverlap();
-    std::unordered_set<BaseCollisionComponent*> collisionComponentSet = CollisionManager::GetCollisionManager()->collisionComponentSet;
-    for (auto& collisionComp : collisionComponentSet)
-    {
-        //TODO: use BVH structrue to speed up detect efficiency
-        if (collisionComp == this) continue;
-        if (DetectCollision(*collisionComp))
-        {
-            //If collision is detected, it may be ok to broadcast BeginOverlap event
-            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnBeginOverlap(*this, *collisionComp);
-        }
-        else
-        {
-            //If collision is not detected, it may be ok to broadcast EndOverlap event
-            CollisionManager::GetCollisionManager()->CheckAndBroadcast_OnEndOverlap(*this, *collisionComp);
-        }
-    }
-
+    Math::sVector radiusVec(radius, radius, radius);
+    Math::sVector min = position - radiusVec;
+    Math::sVector max = position + radiusVec;
+    return BoundingBox(min, max);
 }
 
 bool eae6320::Collision::SphereCollisionComponent::DetectCollision(BaseCollisionComponent& otherComp)

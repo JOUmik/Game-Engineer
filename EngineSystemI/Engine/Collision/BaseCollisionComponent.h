@@ -1,6 +1,5 @@
 #pragma once
 #include "Delegate.h"
-
 #include <Engine/Math/sVector.h>
 #include <string>
 
@@ -34,7 +33,7 @@ namespace eae6320
             Overlap,
             Hit
         };
-
+        struct BoundingBox;
         class BaseCollisionComponent
         {
         public:
@@ -43,7 +42,7 @@ namespace eae6320
             Delegate<const BaseCollisionComponent&> OnComponentEndOverlap;
             Delegate<const Math::sVector&> UpdatePositionAfterCollision;
 
-            virtual void CheckOverlap() {}
+            virtual BoundingBox GetBoundingBox() const = 0;
 
             void OnHit(const BaseCollisionComponent& other)
             {
