@@ -5,6 +5,7 @@
 #include "Actors/HitTestActor.h"
 #include "Actors/OverlapBeginTestActor.h"
 #include "Actors/OverlapEndTestActor.h"
+#include "ControlledActor.h"
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/UserInput/UserInput.h>
@@ -225,7 +226,7 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	backgroundColor.g = 0.1f;
 	backgroundColor.b = 0.7f;
 	//Graphics::CreateMesh(vertexData01, indexData01, 7, 9, mesh01);
-	Graphics::CreateMesh("data/Meshes/cube.lua", mesh01);
+	Graphics::CreateMesh("data/Meshes/Sphere.lua", mesh01);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh02);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh03);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh04);
@@ -240,7 +241,7 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	playerController = new eae6320::GameFramework::APlayerController();
 
 	//Actor
-	controlledActor = new eae6320::AHitTestActor(mesh01, effect02);
+	controlledActor = new eae6320::AControlledActor(mesh01, effect02);
 	hitTestActor = new eae6320::AHitTestActor(mesh02, effect03);
 	overlapBeginActor = new eae6320::AOverlapBeginTestActor(mesh03, effect04);
 	overlapEndActor = new eae6320::AOverlapEndTestActor(mesh04, effect05);
@@ -250,10 +251,10 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	overlapBeginActor->SetPosition(Math::sVector(0.f, 3.f, -0.1f));
 	overlapEndActor->SetPosition(Math::sVector(3.f, 3.f, -0.1f));
 
-	controlledActor->GetBoxComp()->SetCollisionComponentType(Collision::CollisionComponentType::Dynamic);
+	controlledActor->GetSphereComp()->SetCollisionComponentType(Collision::CollisionComponentType::Dynamic);
 
 	//Set the extend of collision comp
-	controlledActor->GetBoxComp()->SetExtend(Math::sVector(0.5f, 0.5f, 0.5f));
+	controlledActor->GetSphereComp()->SetRadius(0.5f);
 	hitTestActor->GetBoxComp()->SetExtend(Math::sVector(0.5f, 0.5f, 0.5f));
 	overlapBeginActor->GetBoxComp()->SetExtend(Math::sVector(0.5f, 0.5f, 0.5f));
 	overlapEndActor->GetBoxComp()->SetExtend(Math::sVector(0.5f, 0.5f, 0.5f));

@@ -77,7 +77,7 @@ namespace eae6320
             }
 
             inline void SetCollisionEvent(CollisionEvent i_collisionEvent = CollisionEvent::Hit) { collisionEvent = i_collisionEvent; }
-            inline void SetCollisionComponentType(CollisionComponentType i_collisionComponentType = CollisionComponentType::Static) { collisionComponentType = i_collisionComponentType; }
+            inline void SetCollisionComponentType(CollisionComponentType i_collisionComponentType = CollisionComponentType::Dynamic) { collisionComponentType = i_collisionComponentType; }
             inline bool IsHitEventEnabled() const { return collisionEvent >= CollisionEvent::Hit; }
             inline bool IsOverlapEventEnabled() const { return collisionEvent >= CollisionEvent::Overlap;}
             inline void SetPosition(Math::sVector i_position) { position = i_position; }
@@ -89,7 +89,7 @@ namespace eae6320
             bool bIsMoving = false;
         protected:
             CollisionShape collisionShape = CollisionShape::None;
-            CollisionComponentType collisionComponentType = CollisionComponentType::Static;
+            CollisionComponentType collisionComponentType = CollisionComponentType::Dynamic;
             CollisionEvent collisionEvent = CollisionEvent::Hit;
             Math::sVector position = Math::sVector();
             Math::sVector targetPosition = Math::sVector();

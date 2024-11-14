@@ -45,6 +45,7 @@ namespace eae6320
 		class Effect;
 	}
 
+	class AControlledActor;
 	class AHitTestActor;
 	class AOverlapBeginTestActor;
 	class AOverlapEndTestActor;
@@ -67,7 +68,7 @@ namespace eae6320
 		eae6320::GameFramework::APlayerController* playerController = nullptr;
 
 		//Actors
-		eae6320::AHitTestActor* controlledActor = nullptr;
+		eae6320::AControlledActor* controlledActor = nullptr;
 		eae6320::AHitTestActor* hitTestActor = nullptr;
 		eae6320::AOverlapBeginTestActor* overlapBeginActor = nullptr;
 		eae6320::AOverlapEndTestActor* overlapEndActor = nullptr;

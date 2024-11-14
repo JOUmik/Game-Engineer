@@ -23,5 +23,6 @@ return
 		{ path = "Meshes/Ground.lua" },
 		{ path = "Meshes/Tree.lua" },
 		{ path = "Meshes/Donut.lua" },
+		{ path = "Meshes/Sphere.lua" },
 	}
 }

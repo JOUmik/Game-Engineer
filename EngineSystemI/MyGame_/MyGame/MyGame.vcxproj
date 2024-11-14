@@ -32,6 +32,7 @@
     <ClInclude Include="Actors\OverlapBeginTestActor.h" />
     <ClInclude Include="Actors\OverlapEndTestActor.h" />
     <ClInclude Include="cMyGame.h" />
+    <ClInclude Include="ControlledActor.h" />
     <ClInclude Include="Resource Files\Resource.h" />
     <ClInclude Include="Resource Files\targetver.h" />
   </ItemGroup>
@@ -40,6 +41,7 @@
     <ClCompile Include="Actors\OverlapBeginTestActor.cpp" />
     <ClCompile Include="Actors\OverlapEndTestActor.cpp" />
     <ClCompile Include="cMyGame.cpp" />
+    <ClCompile Include="ControlledActor.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
   </ItemGroup>
   <ItemGroup>

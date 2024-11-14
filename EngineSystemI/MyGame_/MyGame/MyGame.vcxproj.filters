@@ -44,6 +44,9 @@
     <ClInclude Include="Actors\OverlapEndTestActor.h">
       <Filter>Actors</Filter>
     </ClInclude>
+    <ClInclude Include="ControlledActor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cMyGame.cpp" />
@@ -55,6 +58,9 @@
       <Filter>Actors</Filter>
     </ClCompile>
     <ClCompile Include="Actors\OverlapEndTestActor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlledActor.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
   </ItemGroup>
