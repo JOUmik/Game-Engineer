@@ -60,6 +60,10 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 	static bool SPressed = false;
 	static bool APressed = false;
 	static bool DPressed = false;
+	static bool IPressed = false;
+	static bool KPressed = false;
+	static bool JPressed = false;
+	static bool LPressed = false;
 	static bool UpArrowPressed = false;
 	static bool DownArrowPressed = false;
 	static bool LeftArrowPressed = false;
@@ -151,6 +155,57 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.x += 1.5f;
 			APressed = false;
+		}
+	}
+
+	//Actor Movement
+	{
+		//Up
+		if (UserInput::IsKeyPressed('I') && !IPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.y += 1.5f;
+			IPressed = true;
+		}
+		if (!UserInput::IsKeyPressed('I') && IPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.y -= 1.5f;
+			IPressed = false;
+		}
+
+		//Down
+		if (UserInput::IsKeyPressed('K') && !KPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.y -= 1.5f;
+			KPressed = true;
+		}
+		if (!UserInput::IsKeyPressed('K') && KPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.y += 1.5f;
+			KPressed = false;
+		}
+
+		//Right
+		if (UserInput::IsKeyPressed('L') && !LPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.x += 1.5f;
+			LPressed = true;
+		}
+		if (!UserInput::IsKeyPressed('L') && LPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.x -= 1.5f;
+			LPressed = false;
+		}
+
+		//Left
+		if (UserInput::IsKeyPressed('J') && !JPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.x -= 1.5f;
+			JPressed = true;
+		}
+		if (!UserInput::IsKeyPressed('J') && JPressed)
+		{
+			hitTestActor->rigidBodyState->velocity.x += 1.5f;
+			JPressed = false;
 		}
 	}
 

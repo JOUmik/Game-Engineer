@@ -7,7 +7,7 @@ eae6320::AHitTestActor::AHitTestActor(eae6320::Graphics::Mesh* i_mesh, eae6320::
 
     boxComp = new Collision::BoxCollisionComponent();
     boxComp->SetCollisionEvent(Collision::CollisionEvent::Hit);
-    boxComp->SetCollisionComponentType(Collision::CollisionComponentType::Static);
+    boxComp->SetCollisionComponentType(Collision::CollisionComponentType::Dynamic);
 
     Collision::CollisionManager::GetCollisionManager()->AddCollisionComponent(*boxComp);
 
