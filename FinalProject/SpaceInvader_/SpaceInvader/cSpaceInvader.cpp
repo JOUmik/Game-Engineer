@@ -5,6 +5,8 @@
 #include "Actors/Enemy.h"
 #include "Actors/ControlledActor.h"
 #include "Actors/LaserBullet.h"
+#include "Actors/Block.h"
+#include "Actors/GameOverBlock.h"
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/UserInput/UserInput.h>
@@ -33,9 +35,9 @@ void eae6320::cSpaceInvader::SubmitDataToBeRendered(const float i_elapsedSecondC
 	//float r = (std::cos(9.0f * simulateTime) * 0.1f) + 0.15f;
 	//float g = (std::sin(2.0f * simulateTime) * 0.1f) + 0.15f;
 	//float b = (-std::cos(5.0f * simulateTime) * 0.2f) + 0.25f;
-	float r = 0.7f;
-	float g = 0.7f;
-	float b = 0.9f;
+	float r = 0.6f;
+	float g = 0.8f;
+	float b = 1.f;
 	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
 	
 	// Player Controller send the binded camera date to graphics
@@ -45,33 +47,56 @@ void eae6320::cSpaceInvader::SubmitDataToBeRendered(const float i_elapsedSecondC
 
 	//Draw Actors
 	{
-
-		if (controlledActor->bHitEventGeneratedCurrentFrame)
-		{
-			controlledActor->Draw();
-			controlledActor->bHitEventGeneratedCurrentFrame = false;
-		}
-		else
+		if (!GameOver) 
 		{
 			controlledActor->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+
+			for (auto enemy : enemySet)
+			{
+				if (enemy->bIsShow)
+				{
+					enemy->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+				}
+			}
+
+			for (auto bullet : bulletSet)
+			{
+				if (bullet->bIsShow)
+				{
+					bullet->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+				}
+
+			}
 		}
 
-		for (auto enemy : enemySet)
+		if (GameOver) 
 		{
-			if (enemy->bIsShow) 
+			controlledActor->Draw();
+
+			for (auto enemy : enemySet)
 			{
-				enemy->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+				if (enemy->bIsShow)
+				{
+					enemy->Draw();
+				}
+			}
+
+			for (auto bullet : bulletSet)
+			{
+				if (bullet->bIsShow)
+				{
+					bullet->Draw();
+				}
+
 			}
 		}
-		
-		for (auto bullet : bulletSet) 
-		{
-			if (bullet->bIsShow) 
-			{
-				bullet->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
-			}
-			
-		}
+	}
+
+	//Debug
+	{
+		//leftBlock->Draw();
+		//rightBlock->Draw();
+		gameOverBlock->Draw();
 	}
 }
 
@@ -82,10 +107,6 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 	static bool SPressed = false;
 	static bool APressed = false;
 	static bool DPressed = false;
-	static bool IPressed = false;
-	static bool KPressed = false;
-	static bool JPressed = false;
-	static bool LPressed = false;
 	static bool UpArrowPressed = false;
 	static bool DownArrowPressed = false;
 	static bool LeftArrowPressed = false;
@@ -119,119 +140,128 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 
 	//Actor Movement
 	{
-		//Up
-		if (UserInput::IsKeyPressed('W') && !WPressed)
-		{
-			controlledActor->rigidBodyState->velocity.y += 2.5f;
-			WPressed = true;
-		}
-		if (!UserInput::IsKeyPressed('W') && WPressed)
-		{
-			controlledActor->rigidBodyState->velocity.y -= 2.5f;
-			WPressed = false;
-		}
+		////Up
+		//if (UserInput::IsKeyPressed('W') && !WPressed)
+		//{
+		//	controlledActor->rigidBodyState->velocity.y += 2.5f;
+		//	WPressed = true;
+		//}
+		//if (!UserInput::IsKeyPressed('W') && WPressed)
+		//{
+		//	controlledActor->rigidBodyState->velocity.y -= 2.5f;
+		//	WPressed = false;
+		//}
 
-		//Down
-		if (UserInput::IsKeyPressed('S') && !SPressed)
-		{
-			controlledActor->rigidBodyState->velocity.y -= 2.5f;
-			SPressed = true;
-		}
-		if (!UserInput::IsKeyPressed('S') && SPressed)
-		{
-			controlledActor->rigidBodyState->velocity.y += 2.5f;
-			SPressed = false;
-		}
+		////Down
+		//if (UserInput::IsKeyPressed('S') && !SPressed)
+		//{
+		//	controlledActor->rigidBodyState->velocity.y -= 2.5f;
+		//	SPressed = true;
+		//}
+		//if (!UserInput::IsKeyPressed('S') && SPressed)
+		//{
+		//	controlledActor->rigidBodyState->velocity.y += 2.5f;
+		//	SPressed = false;
+		//}
 
 		//Right
 		if (UserInput::IsKeyPressed('D') && !DPressed)
 		{
-			controlledActor->rigidBodyState->velocity.x += 2.5f;
+			controlledActor->rigidBodyState->velocity.x += 3.f;
 			DPressed = true;
 		}
 		if (!UserInput::IsKeyPressed('D') && DPressed)
 		{
-			controlledActor->rigidBodyState->velocity.x -= 2.5f;
+			controlledActor->rigidBodyState->velocity.x -= 3.f;
 			DPressed = false;
 		}
 
 		//Left
 		if (UserInput::IsKeyPressed('A') && !APressed)
 		{
-			controlledActor->rigidBodyState->velocity.x -= 2.5f;
+			controlledActor->rigidBodyState->velocity.x -= 3.f;
 			APressed = true;
 		}
 		if (!UserInput::IsKeyPressed('A') && APressed)
 		{
-			controlledActor->rigidBodyState->velocity.x += 2.5f;
+			controlledActor->rigidBodyState->velocity.x += 3.f;
 			APressed = false;
 		}
 	}
 
 	//Camera Movement
-	{
-		//Up
-		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && !UpArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() + Math::sVector(0, 1.5f, 0));
-			UpArrowPressed = true;
-		}
-		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && UpArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() - Math::sVector(0, 1.5f, 0));
-			UpArrowPressed = false;
-		}
+	//{
+	//	//Up
+	//	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && !UpArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() + Math::sVector(0, 1.5f, 0));
+	//		UpArrowPressed = true;
+	//	}
+	//	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Up) && UpArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() - Math::sVector(0, 1.5f, 0));
+	//		UpArrowPressed = false;
+	//	}
 
-		//Down
-		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && !DownArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() - Math::sVector(0, 1.5f, 0));
-			DownArrowPressed = true;
-		}
-		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && DownArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() + Math::sVector(0, 1.5f, 0));
-			DownArrowPressed = false;
-		}
+	//	//Down
+	//	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && !DownArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() - Math::sVector(0, 1.5f, 0));
+	//		DownArrowPressed = true;
+	//	}
+	//	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Down) && DownArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() + Math::sVector(0, 1.5f, 0));
+	//		DownArrowPressed = false;
+	//	}
 
-		//Right
-		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && !RightArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() + Math::sVector(1.5f, 0, 0));
-			RightArrowPressed = true;
-		}
-		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && RightArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() - Math::sVector(1.5f, 0, 0));
-			RightArrowPressed = false;
-		}
+	//	//Right
+	//	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && !RightArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() + Math::sVector(1.5f, 0, 0));
+	//		RightArrowPressed = true;
+	//	}
+	//	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Right) && RightArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() - Math::sVector(1.5f, 0, 0));
+	//		RightArrowPressed = false;
+	//	}
 
-		//Left
-		if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && !LeftArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() - Math::sVector(1.5f, 0, 0));
-			LeftArrowPressed = true;
-		}
-		if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && LeftArrowPressed)
-		{
-			camera->SetVelocity(camera->GetVelocity() + Math::sVector(1.5f, 0, 0));
-			LeftArrowPressed = false;
-		}
-	}
+	//	//Left
+	//	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && !LeftArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() - Math::sVector(1.5f, 0, 0));
+	//		LeftArrowPressed = true;
+	//	}
+	//	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Left) && LeftArrowPressed)
+	//	{
+	//		camera->SetVelocity(camera->GetVelocity() + Math::sVector(1.5f, 0, 0));
+	//		LeftArrowPressed = false;
+	//	}
+	//}
 }
 
 void eae6320::cSpaceInvader::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
+	EnemyMovement(i_elapsedSecondCount_sinceLastUpdate);
+
 	if (GameOver) return;
 	currentSpawnGap += i_elapsedSecondCount_sinceLastUpdate;
 	controlledActor->Update(i_elapsedSecondCount_sinceLastUpdate);
 	camera->Update(i_elapsedSecondCount_sinceLastUpdate);
+	bool allEnemyDied = true;
 	for (auto enemy : enemySet) 
 	{
 		if (enemy->bIsShow) 
 		{
+			allEnemyDied = false;
 			enemy->Update(i_elapsedSecondCount_sinceLastUpdate);
 		}
+	}
+	if (allEnemyDied) 
+	{
+		gameOverBlock->ChangeEffect(greenEffect);
+		GameOver = true;
 	}
 	for (auto bullet : bulletSet) 
 	{
@@ -255,24 +285,25 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 	backgroundColor.g = 0.1f;
 	backgroundColor.b = 0.7f;
 	//Graphics::CreateMesh(vertexData01, indexData01, 7, 9, mesh01);
-	Graphics::CreateMesh("data/Meshes/Player.lua", mesh01);
-	Graphics::CreateMesh("data/Meshes/Enemy.lua", mesh02);
-	Graphics::CreateMesh("data/Meshes/cube.lua", mesh03);
-	Graphics::CreateMesh("data/Meshes/cube.lua", mesh04);
+	Graphics::CreateMesh("data/Meshes/Player.lua", playerMesh);
+	Graphics::CreateMesh("data/Meshes/Enemy.lua", enemyMesh);
+	Graphics::CreateMesh("data/Meshes/Block.lua", blockMesh);
+	Graphics::CreateMesh("data/Meshes/GameOverBlock.lua", gameOverBlockMesh);
 	Graphics::CreateMesh("data/Meshes/LaserBullet.lua", bulletMesh);
-	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01);
-	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/PlayerShader.shader", effect02);
-	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Green.shader", effect03);
-	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Red.shader", effect04);
-	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Oriange.shader", effect05);
-	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Gray.shader", effect06);
+	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Dark.shader", darkEffect);
+	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/PlayerShader.shader", playerEffect);
+	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Green.shader", greenEffect);
+	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Gray.shader", grayEffect);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/BulletShader.shader", bulletEffect);
 
 	//Player Controller
 	playerController = new GameFramework::APlayerController();
 
 	//Actor
-	controlledActor = new AControlledActor(mesh01, effect02);
+	controlledActor = new AControlledActor(playerMesh, playerEffect);
+	leftBlock = new ABlock(blockMesh, greenEffect);
+	rightBlock = new ABlock(blockMesh, greenEffect);
+	gameOverBlock = new AGameOverBlock(gameOverBlockMesh, darkEffect);
 	CreateEnemies();
 
 	//Audio
@@ -284,14 +315,26 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 	ExplosionAudio->SubmitAudioToBePlayed();
 
 	controlledActor->SetPosition(Math::sVector(0.f, -4.f, 0.f));
-
-	controlledActor->GetSphereComp()->SetCollisionComponentType(Collision::CollisionComponentType::Dynamic);
+	leftBlock->SetPosition(Math::sVector(-6.3f, 7.f, 0.f));
+	rightBlock->SetPosition(Math::sVector(6.3f, 7.f, 0.f));
+	gameOverBlock->SetPosition(Math::sVector(0.f, -3.4f, 0.f));
 
 	//Set the extend of collision comp
-	controlledActor->GetSphereComp()->SetRadius(0.5f);
+	controlledActor->GetSphereComp()->SetRadius(0.4f);
+	leftBlock->GetBoxComp()->SetExtend(Math::sVector(0.5f, 10.f, 0.5f));
+	rightBlock->GetBoxComp()->SetExtend(Math::sVector(0.5f, 10.f, 0.5f));
+	gameOverBlock->GetBoxComp()->SetExtend(Math::sVector(8.f, 0.02f, 0.1f));
+
+	//Bind Event
+	leftBlock->EnemyOverlapWithBlock.Add(this, &cSpaceInvader::EnemyOverlapWithBlock);
+	rightBlock->EnemyOverlapWithBlock.Add(this, &cSpaceInvader::EnemyOverlapWithBlock);
+	gameOverBlock->EnemyOverlapWithGameOverBlock.Add(this, &cSpaceInvader::EnemyOverlapWithGameOverBlock);
 
 	//Call Begin function of actors
 	controlledActor->Begin();
+	leftBlock->Begin();
+	rightBlock->Begin();
+	gameOverBlock->Begin();
 
 	//Call CollisionManager::Begin to build BVH
 	Collision::CollisionManager::GetCollisionManager()->Begin();
@@ -309,11 +352,17 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 eae6320::cResult eae6320::cSpaceInvader::CleanUp()
 {
 	controlledActor->CleanUp();
+	leftBlock->CleanUp();
+	rightBlock->CleanUp();
 	camera->CleanUp();
+	gameOverBlock->CleanUp();
 	delete controlledActor;
 	delete camera;
 	delete playerController;
 	delete laserAudio;
+	delete leftBlock;
+	delete rightBlock;
+	delete gameOverBlock;
 	for (auto enemy : enemySet) 
 	{
 		enemy->CleanUp();
@@ -326,17 +375,15 @@ eae6320::cResult eae6320::cSpaceInvader::CleanUp()
 	}
 	bulletSet.clear();
 
-	mesh01->DecrementReferenceCount();
-	mesh02->DecrementReferenceCount();
-	mesh03->DecrementReferenceCount();
-	mesh04->DecrementReferenceCount();
+	playerMesh->DecrementReferenceCount();
+	enemyMesh->DecrementReferenceCount();
+	blockMesh->DecrementReferenceCount();
+	gameOverBlockMesh->DecrementReferenceCount();
 	bulletMesh->DecrementReferenceCount();
-	effect01->DecrementReferenceCount();
-	effect02->DecrementReferenceCount();
-	effect03->DecrementReferenceCount();
-	effect04->DecrementReferenceCount();
-	effect05->DecrementReferenceCount();
-	effect06->DecrementReferenceCount();
+	darkEffect->DecrementReferenceCount();
+	playerEffect->DecrementReferenceCount();
+	greenEffect->DecrementReferenceCount();
+	grayEffect->DecrementReferenceCount();
 	bulletEffect->DecrementReferenceCount();
 
 	Collision::CollisionManager::GetCollisionManager()->Destroy();
@@ -350,11 +397,11 @@ void eae6320::cSpaceInvader::SwitchShader()
 {
 	if (!isDiffShader) 
 	{
-		controlledActor->ChangeEffect(effect02);
+		controlledActor->ChangeEffect(playerEffect);
 	}
 	else 
 	{
-		controlledActor->ChangeEffect(effect01);
+		controlledActor->ChangeEffect(darkEffect);
 	}
 }
 
@@ -362,11 +409,55 @@ void eae6320::cSpaceInvader::SwitchMesh()
 {
 	if (isCubeMesh) 
 	{
-		controlledActor->ChangeMesh(mesh03);
+		controlledActor->ChangeMesh(blockMesh);
 	}
 	else 
 	{
-		controlledActor->ChangeMesh(mesh01);
+		controlledActor->ChangeMesh(playerMesh);
+	}
+}
+
+void eae6320::cSpaceInvader::EnemyMovement(const float i_elapsedSecondCount_sinceLastUpdate)
+{
+	if (EnemyHasOverlapedWithBlock) 
+	{
+		bEnemyMoveForward = true;
+		EnemyHasOverlapedWithBlock = false;
+		bIsMovingLeft = !bIsMovingLeft;
+		for (auto enemy : enemySet)
+		{
+			if (enemy->bIsShow)
+			{
+				enemy->rigidBodyState->velocity.y = -0.6f;
+				enemy->rigidBodyState->velocity.x = 0.f;
+			}
+		}
+		
+	}
+	if (bEnemyMoveForward) 
+	{
+		currentMoveForwardTime += i_elapsedSecondCount_sinceLastUpdate;
+	}
+	if (currentMoveForwardTime >= maxMoveForwardTime) 
+	{
+		bEnemyMoveForward = false;
+		currentMoveForwardTime = 0.f;
+		for (auto enemy : enemySet) 
+		{
+			if (enemy->bIsShow) 
+			{
+				if (bIsMovingLeft) 
+				{
+					enemy->rigidBodyState->velocity.y = 0.f;
+					enemy->rigidBodyState->velocity.x = -1.5f;
+				}
+				else 
+				{
+					enemy->rigidBodyState->velocity.y = 0.f;
+					enemy->rigidBodyState->velocity.x = 1.5f;
+				}
+			}
+		}
 	}
 }
 
@@ -386,7 +477,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 {
 	//01
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-4.5f, 3.f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -395,7 +486,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//02
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-3.f, 3.f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -404,7 +495,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//03
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-1.5f, 3.f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -413,7 +504,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//04
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(1.5f, 3.f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -422,7 +513,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//05
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(3.f, 3.f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -431,7 +522,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//06
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(4.5f, 3.f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -440,7 +531,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//07
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-4.5f, 4.6f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -449,7 +540,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//08
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-3.f, 4.6f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -458,7 +549,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//09
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-1.5f, 4.6f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -467,7 +558,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//10
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(1.5f, 4.6f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -476,7 +567,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//11
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(3.f, 4.6f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -485,7 +576,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//12
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(4.5f, 4.6f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -494,7 +585,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//13
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-3.f, 1.4f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -503,7 +594,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//14
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(-1.5f, 1.4f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -512,7 +603,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//15
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(1.5f, 1.4f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -521,7 +612,7 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	}
 	//16
 	{
-		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		AEnemy* enemy = new AEnemy(enemyMesh, grayEffect);
 		enemy->SetPosition(Math::sVector(3.f, 1.4f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
@@ -533,4 +624,14 @@ void eae6320::cSpaceInvader::CreateEnemies()
 void eae6320::cSpaceInvader::EnemyDestroyed()
 {
 	ExplosionAudio->PlayIndependent();
+}
+
+void eae6320::cSpaceInvader::EnemyOverlapWithBlock()
+{
+	EnemyHasOverlapedWithBlock = true;
+}
+
+void eae6320::cSpaceInvader::EnemyOverlapWithGameOverBlock()
+{
+	GameOver = true;
 }

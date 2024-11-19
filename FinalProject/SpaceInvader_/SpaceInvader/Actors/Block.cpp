@@ -3,7 +3,6 @@
 
 eae6320::ABlock::ABlock(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect) : GameFramework::AActor(i_mesh, i_effect)
 {
-    Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect);
 
     boxComp = new Collision::BoxCollisionComponent();
     boxComp->SetCollisionEvent(Collision::CollisionEvent::Overlap);
@@ -30,7 +29,7 @@ void eae6320::ABlock::Update(const float i_elapsedSecondCount_sinceLastSimulatio
 
 void eae6320::ABlock::OnComponentBeginOverlap(const Collision::BaseCollisionComponent&)
 {
-    ChangeEffect(effect);
+    EnemyOverlapWithBlock.Broadcast();
 }
 
 
@@ -40,8 +39,5 @@ void eae6320::ABlock::CleanUp()
 
     Collision::CollisionManager::GetCollisionManager()->RemoveCollisionComponent(*boxComp);
     delete boxComp;
-    if (effect != nullptr)
-    {
-        effect->DecrementReferenceCount();
-    }
+    boxComp = nullptr;
 }

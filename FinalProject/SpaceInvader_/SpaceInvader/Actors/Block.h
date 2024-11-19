@@ -8,6 +8,7 @@ namespace eae6320
 	class ABlock : public GameFramework::AActor
 	{
 	public:
+		Delegate<> EnemyOverlapWithBlock;
 		ABlock(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect);
 		~ABlock();
 
@@ -21,7 +22,6 @@ namespace eae6320
 		virtual void CleanUp();
 
 	private:
-		Graphics::Effect* effect = nullptr;
 		Collision::BoxCollisionComponent* boxComp;
 	};
 }

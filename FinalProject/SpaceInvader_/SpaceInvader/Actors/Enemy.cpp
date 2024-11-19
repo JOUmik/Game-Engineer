@@ -1,8 +1,6 @@
 #include "Enemy.h"
 #include <Engine/Collision/CollisionManager.h>
 
-bool eae6320::AEnemy::OverlapEventHappened = false;
-
 eae6320::AEnemy::AEnemy(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect) : GameFramework::AActor(i_mesh, i_effect)
 {
     boxComp = new Collision::BoxCollisionComponent();
@@ -11,10 +9,11 @@ eae6320::AEnemy::AEnemy(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effe
 
     Collision::CollisionManager::GetCollisionManager()->AddCollisionComponent(*boxComp);
 
+    rigidBodyState->velocity.x -= 1.f;
+
     //Bind Event
     boxComp->UpdatePositionAfterCollision.Add(this, &AEnemy::UpdatePosition);
     boxComp->OnComponentHit.Add(this, &AEnemy::OnComponentHit);
-    boxComp->OnComponentBeginOverlap.Add(this, &AEnemy::OnComponentBeginOverlap);
 }
 
 eae6320::AEnemy::~AEnemy()
@@ -45,12 +44,6 @@ void eae6320::AEnemy::OnComponentHit(const Collision::BaseCollisionComponent&)
     HideInTheGame();
 }
 
-void eae6320::AEnemy::OnComponentBeginOverlap(const Collision::BaseCollisionComponent&)
-{
-    OverlapEventHappened = true;
-}
-
-
 void eae6320::AEnemy::CleanUp()
 {
     AActor::CleanUp();
@@ -62,6 +55,7 @@ void eae6320::AEnemy::CleanUp()
 
 void eae6320::AEnemy::HideInTheGame()
 {
+    rigidBodyState->velocity = Math::sVector(0.f, 0.f, 0.f);
     Collision::CollisionManager::GetCollisionManager()->RemoveCollisionComponent(*boxComp);
     bIsShow = false;
 }

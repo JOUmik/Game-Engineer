@@ -53,33 +53,36 @@ namespace eae6320
 	class AControlledActor;
 	class ALaserBullet;
 	class AEnemy;
+	class ABlock;
+	class AGameOverBlock;
 	class cSpaceInvader final : public Application::iApplication
 	{
 	public:
 		sColor backgroundColor;
-		Graphics::Mesh* mesh01 = nullptr;
-		Graphics::Mesh* mesh02 = nullptr;
-		Graphics::Mesh* mesh03 = nullptr;
-		Graphics::Mesh* mesh04 = nullptr;
+		Graphics::Mesh* playerMesh = nullptr;
+		Graphics::Mesh* enemyMesh = nullptr;
+		Graphics::Mesh* blockMesh = nullptr;
+		Graphics::Mesh* gameOverBlockMesh = nullptr;
 		Graphics::Mesh* bulletMesh = nullptr;
-		Graphics::Effect* effect01 = nullptr;
-		Graphics::Effect* effect02 = nullptr;
-		Graphics::Effect* effect03 = nullptr;
-		Graphics::Effect* effect04 = nullptr;
-		Graphics::Effect* effect05 = nullptr;
-		Graphics::Effect* effect06 = nullptr;
+		Graphics::Effect* darkEffect = nullptr;
+		Graphics::Effect* playerEffect = nullptr;
+		Graphics::Effect* greenEffect = nullptr;
+		Graphics::Effect* grayEffect = nullptr;
 		Graphics::Effect* bulletEffect = nullptr;
 		AudioSystem::cAudio* laserAudio = nullptr;
 		AudioSystem::cAudio* ExplosionAudio = nullptr;
 
 		//Player Controller
-		eae6320::GameFramework::APlayerController* playerController = nullptr;
+		GameFramework::APlayerController* playerController = nullptr;
 
 		//Actors
-		eae6320::AControlledActor* controlledActor = nullptr;
+		AControlledActor* controlledActor = nullptr;
+		ABlock* leftBlock = nullptr;
+		ABlock* rightBlock = nullptr;
+		AGameOverBlock* gameOverBlock = nullptr;
 
 		//Cameras
-		eae6320::GameFramework::ACameraActor* camera = nullptr;
+		GameFramework::ACameraActor* camera = nullptr;
 
 		//Input Control
 		bool isShow = true;
@@ -149,9 +152,12 @@ namespace eae6320
 		void SwitchMesh();
 
 		//Game Play
+		void EnemyMovement(const float i_elapsedSecondCount_sinceLastUpdate);
 		void SpawnBullet();
 		void CreateEnemies();
 		void EnemyDestroyed();
+		void EnemyOverlapWithBlock();
+		void EnemyOverlapWithGameOverBlock();
 
 		std::vector<ALaserBullet*> bulletSet;
 		float bulletSpawnGap = 0.6f;
@@ -159,6 +165,11 @@ namespace eae6320
 
 		std::vector<AEnemy*> enemySet;
 
+		bool EnemyHasOverlapedWithBlock = false;
+		bool bEnemyMoveForward = false;
+		float currentMoveForwardTime = 0.f;
+		float maxMoveForwardTime = 0.7f;
+		bool bIsMovingLeft = true;
 		bool GameOver = false;
 	};
 }

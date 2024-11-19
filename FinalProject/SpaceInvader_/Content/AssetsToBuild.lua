@@ -14,6 +14,7 @@ return
 		{ path = "Shaders/Fragment/Gray.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/BulletShader.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/PlayerShader.shader", arguments = { "fragment" } },
+		{ path = "Shaders/Fragment/Dark.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/animatedColor.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Vertex/vertexInputLayout_mesh.shader", arguments = { "vertex" } },
 	},
@@ -25,6 +26,8 @@ return
 		{ path = "Meshes/LaserBullet.lua" },
 		{ path = "Meshes/Enemy.lua" },
 		{ path = "Meshes/Player.lua" },
+		{ path = "Meshes/Block.lua" },
+		{ path = "Meshes/GameOverBlock.lua" },
 	},
 	audio = {
 		{ path = "Audio/Laser.mp3"},

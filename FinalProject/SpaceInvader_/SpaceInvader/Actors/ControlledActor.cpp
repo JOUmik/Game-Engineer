@@ -7,7 +7,7 @@ eae6320::AControlledActor::AControlledActor(eae6320::Graphics::Mesh* i_mesh, eae
 
     SphereComp = new Collision::SphereCollisionComponent();
     SphereComp->SetCollisionEvent(Collision::CollisionEvent::Hit);
-    SphereComp->SetCollisionComponentType(Collision::CollisionComponentType::Static);
+    SphereComp->SetCollisionComponentType(Collision::CollisionComponentType::Dynamic);
 
     Collision::CollisionManager::GetCollisionManager()->AddCollisionComponent(*SphereComp);
 
