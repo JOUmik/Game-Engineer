@@ -9,7 +9,7 @@ eae6320::ALaserBullet::ALaserBullet(eae6320::Graphics::Mesh* i_mesh, eae6320::Gr
 
     Collision::CollisionManager::GetCollisionManager()->AddCollisionComponent(*BoxComp);
 
-    rigidBodyState->velocity.y = 4.f;
+    rigidBodyState->velocity.y = 7.f;
 
     //Bind Event
     BoxComp->UpdatePositionAfterCollision.Add(this, &ALaserBullet::UpdatePosition);
@@ -27,9 +27,16 @@ void eae6320::ALaserBullet::Begin()
 
 void eae6320::ALaserBullet::Update(const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
+    currentLifeTime += i_elapsedSecondCount_sinceLastSimulationUpdate;
+
     if (rigidBodyState->velocity.GetLength() != 0)
     {
         BoxComp->TryMoveTo(rigidBodyState->PredictFuturePosition(i_elapsedSecondCount_sinceLastSimulationUpdate));
+    }
+
+    if (currentLifeTime >= maxLifeTime) 
+    {
+        HideInTheGame();
     }
 }
 
@@ -40,7 +47,7 @@ void eae6320::ALaserBullet::UpdatePosition(const Math::sVector& safePosition)
 
 void eae6320::ALaserBullet::OnComponentHit(const Collision::BaseCollisionComponent&)
 {
-    CleanUp();
+    HideInTheGame();
 }
 
 
@@ -53,5 +60,12 @@ void eae6320::ALaserBullet::CleanUp()
 
         Collision::CollisionManager::GetCollisionManager()->RemoveCollisionComponent(*BoxComp);
         delete BoxComp;
+        BoxComp = nullptr;
     }
+}
+
+void eae6320::ALaserBullet::HideInTheGame()
+{
+    Collision::CollisionManager::GetCollisionManager()->RemoveCollisionComponent(*BoxComp);
+    bIsShow = false;
 }

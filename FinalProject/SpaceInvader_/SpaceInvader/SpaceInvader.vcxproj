@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actors\ControlledActor.h" />
+    <ClInclude Include="Actors\Enemy.h" />
     <ClInclude Include="Actors\HitTestActor.h" />
     <ClInclude Include="Actors\LaserBullet.h" />
     <ClInclude Include="Actors\OverlapBeginTestActor.h" />
@@ -39,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actors\ControlledActor.cpp" />
+    <ClCompile Include="Actors\Enemy.cpp" />
     <ClCompile Include="Actors\HitTestActor.cpp" />
     <ClCompile Include="Actors\LaserBullet.cpp" />
     <ClCompile Include="Actors\OverlapBeginTestActor.cpp" />

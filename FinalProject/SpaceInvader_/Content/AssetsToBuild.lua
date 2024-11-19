@@ -13,6 +13,7 @@ return
 		{ path = "Shaders/Fragment/Oriange.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/Gray.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/BulletShader.shader", arguments = { "fragment" } },
+		{ path = "Shaders/Fragment/PlayerShader.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/animatedColor.shader", arguments = { "fragment" } },
 		{ path = "Shaders/Vertex/vertexInputLayout_mesh.shader", arguments = { "vertex" } },
 	},
@@ -22,8 +23,11 @@ return
 		{ path = "Meshes/Ground.lua" },
 		{ path = "Meshes/Sphere.lua" },
 		{ path = "Meshes/LaserBullet.lua" },
+		{ path = "Meshes/Enemy.lua" },
+		{ path = "Meshes/Player.lua" },
 	},
 	audio = {
 		{ path = "Audio/Laser.mp3"},
+		{ path = "Audio/Explosion.mp3"},
 	}
 }

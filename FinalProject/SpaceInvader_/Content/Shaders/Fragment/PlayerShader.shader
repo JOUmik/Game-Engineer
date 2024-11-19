@@ -14,7 +14,7 @@ fragment_main
 	// Output solid white
 	o_color = vec4(
 		// RGB (color)
-		0.1, 0.1, 0.3,
+		1.0, 0.98, 0.80,
 		// Alpha (opacity)
 		1.0 );
 }

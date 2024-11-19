@@ -50,6 +50,9 @@
     <ClInclude Include="Actors\ControlledActor.h">
       <Filter>Actors</Filter>
     </ClInclude>
+    <ClInclude Include="Actors\Enemy.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cSpaceInvader.cpp" />
@@ -67,6 +70,9 @@
       <Filter>Actors</Filter>
     </ClCompile>
     <ClCompile Include="Actors\LaserBullet.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\Enemy.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
   </ItemGroup>

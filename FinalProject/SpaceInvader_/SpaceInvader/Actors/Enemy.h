@@ -1,17 +1,17 @@
 #pragma once
-#pragma once
 
 #include <Engine/GameFramework/Actor.h>
 #include <Engine/Collision/BoxCollisionComponent.h>
 #include <Engine/Graphics/Graphics.h>
+#include <Engine/Audio/cAudioSystem.h>
 
 namespace eae6320
 {
-	class ALaserBullet : public GameFramework::AActor
+	class AEnemy : public GameFramework::AActor
 	{
 	public:
-		ALaserBullet(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect);
-		~ALaserBullet();
+		AEnemy(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect);
+		~AEnemy();
 
 		virtual void Begin();
 		virtual void Update(const float i_elapsedSecondCount_sinceLastSimulationUpdate);
@@ -19,18 +19,19 @@ namespace eae6320
 		void UpdatePosition(const Math::sVector& safePosition);
 
 		void OnComponentHit(const Collision::BaseCollisionComponent&);
+		void OnComponentBeginOverlap(const Collision::BaseCollisionComponent&);
 
-		inline Collision::BoxCollisionComponent* GetBoxComp() { return BoxComp; }
+		inline Collision::BoxCollisionComponent* GetBoxComp() { return boxComp; }
 
 		virtual void CleanUp();
 
 		void HideInTheGame();
 		bool bIsShow = true;
 
-	private:
-		Collision::BoxCollisionComponent* BoxComp;
+		static bool OverlapEventHappened;
 
-		float currentLifeTime = 0.f;
-		float maxLifeTime = 1.6f;
+	private:
+		Collision::BoxCollisionComponent* boxComp;
+		AudioSystem::cAudio* ExplosionAudio;
 	};
 }

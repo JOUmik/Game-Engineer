@@ -55,6 +55,7 @@ namespace eae6320
 	class AOverlapBeginTestActor;
 	class AOverlapEndTestActor;
 	class ALaserBullet;
+	class AEnemy;
 	class cSpaceInvader final : public Application::iApplication
 	{
 	public:
@@ -78,9 +79,6 @@ namespace eae6320
 
 		//Actors
 		eae6320::AControlledActor* controlledActor = nullptr;
-		eae6320::AHitTestActor* hitTestActor = nullptr;
-		eae6320::AOverlapBeginTestActor* overlapBeginActor = nullptr;
-		eae6320::AOverlapEndTestActor* overlapEndActor = nullptr;
 
 		//Cameras
 		eae6320::GameFramework::ACameraActor* camera = nullptr;
@@ -154,10 +152,15 @@ namespace eae6320
 
 		//Game Play
 		void SpawnBullet();
+		void CreateEnemies();
 
 		std::vector<ALaserBullet*> bulletSet;
 		float bulletSpawnGap = 0.6f;
 		float currentSpawnGap = 0.6f;
+
+		std::vector<AEnemy*> enemySet;
+
+		bool GameOver = false;
 	};
 }
 

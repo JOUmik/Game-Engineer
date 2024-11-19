@@ -58,6 +58,7 @@ namespace eae6320
             std::unordered_set<CollisionPair, CollisionPairHash> previousOverlaps;
             std::unique_ptr<BVHNode> staticBVH;
             std::unique_ptr<BVHNode> dynamicBVH;
+            std::unordered_set<BaseCollisionComponent*> abundantComponentSet;
             CollisionManager();
             ~CollisionManager();
             void BuildStaticBVH();

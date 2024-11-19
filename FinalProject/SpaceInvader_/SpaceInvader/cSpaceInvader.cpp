@@ -2,7 +2,7 @@
 //=========
 
 #include "cSpaceInvader.h"
-#include "Actors/HitTestActor.h"
+#include "Actors/Enemy.h"
 #include "Actors/OverlapBeginTestActor.h"
 #include "Actors/OverlapEndTestActor.h"
 #include "Actors/ControlledActor.h"
@@ -32,9 +32,12 @@ void eae6320::cSpaceInvader::SubmitDataToBeRendered(const float i_elapsedSecondC
 {
 	//animated background
 	float simulateTime = static_cast<float>(GetElapsedSecondCount_simulation());
-	float r = (std::cos(9.0f * simulateTime) * 0.1f) + 0.15f;
-	float g = (std::sin(2.0f * simulateTime) * 0.1f) + 0.15f;
-	float b = (-std::cos(5.0f * simulateTime) * 0.2f) + 0.25f;
+	//float r = (std::cos(9.0f * simulateTime) * 0.1f) + 0.15f;
+	//float g = (std::sin(2.0f * simulateTime) * 0.1f) + 0.15f;
+	//float b = (-std::cos(5.0f * simulateTime) * 0.2f) + 0.25f;
+	float r = 0.7f;
+	float g = 0.7f;
+	float b = 0.9f;
 	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
 	
 	// Player Controller send the binded camera date to graphics
@@ -44,24 +47,32 @@ void eae6320::cSpaceInvader::SubmitDataToBeRendered(const float i_elapsedSecondC
 
 	//Draw Actors
 	{
-		overlapBeginActor->SubmitMeshWithEffectToDraw();
-		if(overlapEndActor->show) overlapEndActor->SubmitMeshWithEffectToDraw();
 
-		if (controlledActor->bHitEventGeneratedCurrentFrame) 
+		if (controlledActor->bHitEventGeneratedCurrentFrame)
 		{
 			controlledActor->Draw();
 			controlledActor->bHitEventGeneratedCurrentFrame = false;
 		}
-		else 
+		else
 		{
 			controlledActor->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
 		}
 
-		hitTestActor->SubmitMeshWithEffectToDraw();
-
+		for (auto enemy : enemySet)
+		{
+			if (enemy->bIsShow) 
+			{
+				enemy->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+			}
+		}
+		
 		for (auto bullet : bulletSet) 
 		{
-			bullet->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+			if (bullet->bIsShow) 
+			{
+				bullet->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+			}
+			
 		}
 	}
 }
@@ -113,100 +124,49 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 		//Up
 		if (UserInput::IsKeyPressed('W') && !WPressed)
 		{
-			controlledActor->rigidBodyState->velocity.y += 1.5f;
+			controlledActor->rigidBodyState->velocity.y += 2.5f;
 			WPressed = true;
 		}
 		if (!UserInput::IsKeyPressed('W') && WPressed)
 		{
-			controlledActor->rigidBodyState->velocity.y -= 1.5f;
+			controlledActor->rigidBodyState->velocity.y -= 2.5f;
 			WPressed = false;
 		}
 
 		//Down
 		if (UserInput::IsKeyPressed('S') && !SPressed)
 		{
-			controlledActor->rigidBodyState->velocity.y -= 1.5f;
+			controlledActor->rigidBodyState->velocity.y -= 2.5f;
 			SPressed = true;
 		}
 		if (!UserInput::IsKeyPressed('S') && SPressed)
 		{
-			controlledActor->rigidBodyState->velocity.y += 1.5f;
+			controlledActor->rigidBodyState->velocity.y += 2.5f;
 			SPressed = false;
 		}
 
 		//Right
 		if (UserInput::IsKeyPressed('D') && !DPressed)
 		{
-			controlledActor->rigidBodyState->velocity.x += 1.5f;
+			controlledActor->rigidBodyState->velocity.x += 2.5f;
 			DPressed = true;
 		}
 		if (!UserInput::IsKeyPressed('D') && DPressed)
 		{
-			controlledActor->rigidBodyState->velocity.x -= 1.5f;
+			controlledActor->rigidBodyState->velocity.x -= 2.5f;
 			DPressed = false;
 		}
 
 		//Left
 		if (UserInput::IsKeyPressed('A') && !APressed)
 		{
-			controlledActor->rigidBodyState->velocity.x -= 1.5f;
+			controlledActor->rigidBodyState->velocity.x -= 2.5f;
 			APressed = true;
 		}
 		if (!UserInput::IsKeyPressed('A') && APressed)
 		{
-			controlledActor->rigidBodyState->velocity.x += 1.5f;
+			controlledActor->rigidBodyState->velocity.x += 2.5f;
 			APressed = false;
-		}
-	}
-
-	//Actor Movement
-	{
-		//Up
-		if (UserInput::IsKeyPressed('I') && !IPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.y += 1.5f;
-			IPressed = true;
-		}
-		if (!UserInput::IsKeyPressed('I') && IPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.y -= 1.5f;
-			IPressed = false;
-		}
-
-		//Down
-		if (UserInput::IsKeyPressed('K') && !KPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.y -= 1.5f;
-			KPressed = true;
-		}
-		if (!UserInput::IsKeyPressed('K') && KPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.y += 1.5f;
-			KPressed = false;
-		}
-
-		//Right
-		if (UserInput::IsKeyPressed('L') && !LPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.x += 1.5f;
-			LPressed = true;
-		}
-		if (!UserInput::IsKeyPressed('L') && LPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.x -= 1.5f;
-			LPressed = false;
-		}
-
-		//Left
-		if (UserInput::IsKeyPressed('J') && !JPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.x -= 1.5f;
-			JPressed = true;
-		}
-		if (!UserInput::IsKeyPressed('J') && JPressed)
-		{
-			hitTestActor->rigidBodyState->velocity.x += 1.5f;
-			JPressed = false;
 		}
 	}
 
@@ -264,13 +224,23 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 
 void eae6320::cSpaceInvader::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
+	if (GameOver) return;
 	currentSpawnGap += i_elapsedSecondCount_sinceLastUpdate;
 	controlledActor->Update(i_elapsedSecondCount_sinceLastUpdate);
-	hitTestActor->Update(i_elapsedSecondCount_sinceLastUpdate);
 	camera->Update(i_elapsedSecondCount_sinceLastUpdate);
+	for (auto enemy : enemySet) 
+	{
+		if (enemy->bIsShow) 
+		{
+			enemy->Update(i_elapsedSecondCount_sinceLastUpdate);
+		}
+	}
 	for (auto bullet : bulletSet) 
 	{
-		bullet->Update(i_elapsedSecondCount_sinceLastUpdate);
+		if (bullet->bIsShow) 
+		{
+			bullet->Update(i_elapsedSecondCount_sinceLastUpdate);
+		}
 	}
 
 	//Update Collision
@@ -287,13 +257,13 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 	backgroundColor.g = 0.1f;
 	backgroundColor.b = 0.7f;
 	//Graphics::CreateMesh(vertexData01, indexData01, 7, 9, mesh01);
-	Graphics::CreateMesh("data/Meshes/Sphere.lua", mesh01);
-	Graphics::CreateMesh("data/Meshes/cube.lua", mesh02);
+	Graphics::CreateMesh("data/Meshes/Player.lua", mesh01);
+	Graphics::CreateMesh("data/Meshes/Enemy.lua", mesh02);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh03);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh04);
 	Graphics::CreateMesh("data/Meshes/LaserBullet.lua", bulletMesh);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01);
-	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02);
+	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/PlayerShader.shader", effect02);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Green.shader", effect03);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Red.shader", effect04);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Oriange.shader", effect05);
@@ -305,32 +275,22 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 
 	//Actor
 	controlledActor = new AControlledActor(mesh01, effect02);
-	hitTestActor = new AHitTestActor(mesh02, effect03);
-	overlapBeginActor = new AOverlapBeginTestActor(mesh03, effect04);
-	overlapEndActor = new AOverlapEndTestActor(mesh04, effect05);
+	CreateEnemies();
 
 	//Audio
 	laserAudio = new AudioSystem::cAudio();
 	laserAudio->AudioConstructor("data/Audio/Laser.mp3", "Laser", 500, false);
 	laserAudio->SubmitAudioToBePlayed();
 
-	hitTestActor->SetPosition(Math::sVector(-3.f, 3.f, -0.1f));
-	overlapBeginActor->SetPosition(Math::sVector(0.f, 3.f, -0.1f));
-	overlapEndActor->SetPosition(Math::sVector(3.f, 3.f, -0.1f));
+	controlledActor->SetPosition(Math::sVector(0.f, -4.f, 0.f));
 
 	controlledActor->GetSphereComp()->SetCollisionComponentType(Collision::CollisionComponentType::Dynamic);
 
 	//Set the extend of collision comp
 	controlledActor->GetSphereComp()->SetRadius(0.5f);
-	hitTestActor->GetBoxComp()->SetExtend(Math::sVector(0.5f, 0.5f, 0.5f));
-	overlapBeginActor->GetBoxComp()->SetExtend(Math::sVector(0.5f, 0.5f, 0.5f));
-	overlapEndActor->GetBoxComp()->SetExtend(Math::sVector(0.5f, 0.5f, 0.5f));
 
 	//Call Begin function of actors
 	controlledActor->Begin();
-	hitTestActor->Begin();
-	overlapBeginActor->Begin();
-	overlapEndActor->Begin();
 
 	//Call CollisionManager::Begin to build BVH
 	Collision::CollisionManager::GetCollisionManager()->Begin();
@@ -348,17 +308,16 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 eae6320::cResult eae6320::cSpaceInvader::CleanUp()
 {
 	controlledActor->CleanUp();
-	hitTestActor->CleanUp();
-	overlapBeginActor->CleanUp();
-	overlapEndActor->CleanUp();
 	camera->CleanUp();
 	delete controlledActor;
-	delete hitTestActor;
-	delete overlapBeginActor;
-	delete overlapEndActor;
 	delete camera;
 	delete playerController;
 	delete laserAudio;
+	for (auto enemy : enemySet) 
+	{
+		enemy->CleanUp();
+		delete enemy;
+	}
 	for (auto bullet : bulletSet) 
 	{
 		bullet->CleanUp();
@@ -416,8 +375,20 @@ void eae6320::cSpaceInvader::SpawnBullet()
 	Math::sVector pos = controlledActor->GetPosition();
 	pos.y += 1.f;
 	laserBullet->SetPosition(pos);
-	laserBullet->GetBoxComp()->SetExtend(Math::sVector(0.1f, 0.3f, 0.1f));
+	laserBullet->GetBoxComp()->SetExtend(Math::sVector(0.05f, 0.16f, 0.05f));
 	laserBullet->Begin();
 
 	bulletSet.push_back(laserBullet);
+}
+
+void eae6320::cSpaceInvader::CreateEnemies()
+{
+	//01
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-3.f, 3.f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemySet.push_back(enemy);
+	}
 }
