@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{794b1db0-8cd8-4519-bcf4-6255520ca5b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actors">
+      <UniqueIdentifier>{a6aac655-7cd2-459b-a1e9-aec6baa21601}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource Files\eaeAlien.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource Files\eaeGamePad.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource Files\vsDefault_large.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource Files\vsDefault_small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource Files\SpaceInvader.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource Files\Resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource Files\targetver.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cSpaceInvader.h" />
+    <ClInclude Include="Actors\HitTestActor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\OverlapBeginTestActor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\OverlapEndTestActor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlledActor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cSpaceInvader.cpp" />
+    <ClCompile Include="EntryPoint.cpp" />
+    <ClCompile Include="Actors\HitTestActor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\OverlapBeginTestActor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\OverlapEndTestActor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlledActor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
