@@ -23,6 +23,11 @@ namespace eae6320
 			rigidBodyState->position = i_Position;
 		}
 
+		Math::sVector AActor::GetPosition()
+		{
+			return rigidBodyState->position;
+		}
+
 		AActor::~AActor(){}
 
 		void AActor::CleanUp()
@@ -31,6 +36,19 @@ namespace eae6320
 			UObject::CleanUp();
 		}
 
-
+		void AActor::Draw()
+		{
+			if (!bIsDestroyed) 
+			{
+				SubmitMeshWithEffectToDraw();
+			}
+		}
+		void AActor::Draw(const float i_elapsedSecondCount_sinceLastSimulationUpdate)
+		{
+			if (!bIsDestroyed) 
+			{
+				SubmitMeshWithEffectToDraw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+			}
+		}
 	}
 }

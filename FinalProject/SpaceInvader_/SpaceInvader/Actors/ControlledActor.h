@@ -23,6 +23,7 @@ namespace eae6320
 
 		virtual void CleanUp();
 
+		bool bHitEventGeneratedCurrentFrame = false;
 	private:
 		Graphics::Effect* effect = nullptr;
 		Collision::SphereCollisionComponent* SphereComp;

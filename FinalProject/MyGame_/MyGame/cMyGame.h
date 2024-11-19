@@ -31,10 +31,7 @@ namespace eae6320
 	{
 		struct sRigidBodyState;
 	}
-	namespace AudioSystem 
-	{
-		class cAudio;
-	}
+
 	struct sColor
 	{
 		float r = 0.f;
@@ -67,7 +64,6 @@ namespace eae6320
 		Graphics::Effect* effect04 = nullptr;
 		Graphics::Effect* effect05 = nullptr;
 		Graphics::Effect* effect06 = nullptr;
-		AudioSystem::cAudio* laserAudio = nullptr;
 
 		//Player Controller
 		eae6320::GameFramework::APlayerController* playerController = nullptr;

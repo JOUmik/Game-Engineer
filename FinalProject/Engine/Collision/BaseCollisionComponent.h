@@ -87,6 +87,7 @@ namespace eae6320
             inline CollisionComponentType GetCollisionComponentType() const { return collisionComponentType; }
 
             bool bIsMoving = false;
+            std::string name = "DefaultName";
         protected:
             CollisionShape collisionShape = CollisionShape::None;
             CollisionComponentType collisionComponentType = CollisionComponentType::Dynamic;

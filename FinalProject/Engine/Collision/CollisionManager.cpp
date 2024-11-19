@@ -82,6 +82,7 @@ std::unique_ptr<eae6320::Collision::BVHNode> eae6320::Collision::CollisionManage
 
 void eae6320::Collision::CollisionManager::DetectCollisionsWithBVH(BaseCollisionComponent* target, BVHNode* root, bool& hitOccurred)
 {
+	if (target == nullptr) return;
 	if (!root || !root->bounds.Intersects(target->GetBoundingBox())) return;
 
 	std::stack<BVHNode*> stack;
@@ -89,6 +90,8 @@ void eae6320::Collision::CollisionManager::DetectCollisionsWithBVH(BaseCollision
 
 	while (!stack.empty()) 
 	{
+		if (target == nullptr) return;
+
 		BVHNode* node = stack.top();
 		stack.pop();
 
@@ -103,7 +106,7 @@ void eae6320::Collision::CollisionManager::DetectCollisionsWithBVH(BaseCollision
 		{
 			for (auto& comp : node->components) 
 			{
-				if (comp == target) continue;
+				if (comp == nullptr || comp == target) continue;
 
 				bool isColliding = comp->DetectCollision(*target);
 
@@ -243,6 +246,7 @@ void eae6320::Collision::CollisionManager::Update()
 {
 	for (auto& comp : collisionComponentSet) 
 	{
+		if (comp == nullptr) continue;
 		// only update the dynamic components that are moving in this update
 		if (comp->GetCollisionComponentType() != CollisionComponentType::Dynamic || !comp->bIsMoving) continue;
 
@@ -280,6 +284,7 @@ void eae6320::Collision::CollisionManager::Update()
 
 			if (hitOccurred) 
 			{
+				if (comp == nullptr) break;
 				Math::sVector safePosition = PerformBinarySearch(startPosition, endPosition, std::max(t - step, 0.f), t, *comp);
 				comp->SetPosition(safePosition);
 				// Update and synchronize location to the actor the collision component bind with

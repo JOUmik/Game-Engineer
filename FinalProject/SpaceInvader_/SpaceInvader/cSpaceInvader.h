@@ -10,6 +10,7 @@
 
 #include <Engine/Application/iApplication.h>
 #include <Engine/Results/Results.h>
+#include <vector>
 
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
@@ -53,6 +54,7 @@ namespace eae6320
 	class AHitTestActor;
 	class AOverlapBeginTestActor;
 	class AOverlapEndTestActor;
+	class ALaserBullet;
 	class cSpaceInvader final : public Application::iApplication
 	{
 	public:
@@ -61,12 +63,14 @@ namespace eae6320
 		Graphics::Mesh* mesh02 = nullptr;
 		Graphics::Mesh* mesh03 = nullptr;
 		Graphics::Mesh* mesh04 = nullptr;
+		Graphics::Mesh* bulletMesh = nullptr;
 		Graphics::Effect* effect01 = nullptr;
 		Graphics::Effect* effect02 = nullptr;
 		Graphics::Effect* effect03 = nullptr;
 		Graphics::Effect* effect04 = nullptr;
 		Graphics::Effect* effect05 = nullptr;
 		Graphics::Effect* effect06 = nullptr;
+		Graphics::Effect* bulletEffect = nullptr;
 		AudioSystem::cAudio* laserAudio = nullptr;
 
 		//Player Controller
@@ -147,6 +151,13 @@ namespace eae6320
 		//input interaction
 		void SwitchShader();
 		void SwitchMesh();
+
+		//Game Play
+		void SpawnBullet();
+
+		std::vector<ALaserBullet*> bulletSet;
+		float bulletSpawnGap = 0.6f;
+		float currentSpawnGap = 0.6f;
 	};
 }
 

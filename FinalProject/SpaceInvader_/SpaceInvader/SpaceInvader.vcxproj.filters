@@ -44,7 +44,10 @@
     <ClInclude Include="Actors\OverlapEndTestActor.h">
       <Filter>Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ControlledActor.h">
+    <ClInclude Include="Actors\LaserBullet.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\ControlledActor.h">
       <Filter>Actors</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,7 +63,10 @@
     <ClCompile Include="Actors\OverlapEndTestActor.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ControlledActor.cpp">
+    <ClCompile Include="Actors\ControlledActor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\LaserBullet.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
   </ItemGroup>

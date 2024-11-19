@@ -5,7 +5,8 @@
 #include "Actors/HitTestActor.h"
 #include "Actors/OverlapBeginTestActor.h"
 #include "Actors/OverlapEndTestActor.h"
-#include "ControlledActor.h"
+#include "Actors/ControlledActor.h"
+#include "Actors/LaserBullet.h"
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/UserInput/UserInput.h>
@@ -46,17 +47,28 @@ void eae6320::cSpaceInvader::SubmitDataToBeRendered(const float i_elapsedSecondC
 		overlapBeginActor->SubmitMeshWithEffectToDraw();
 		if(overlapEndActor->show) overlapEndActor->SubmitMeshWithEffectToDraw();
 
-		controlledActor->SubmitMeshWithEffectToDraw();
+		if (controlledActor->bHitEventGeneratedCurrentFrame) 
+		{
+			controlledActor->Draw();
+			controlledActor->bHitEventGeneratedCurrentFrame = false;
+		}
+		else 
+		{
+			controlledActor->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+		}
 
 		hitTestActor->SubmitMeshWithEffectToDraw();
+
+		for (auto bullet : bulletSet) 
+		{
+			bullet->Draw(i_elapsedSecondCount_sinceLastSimulationUpdate);
+		}
 	}
 }
 
 void eae6320::cSpaceInvader::UpdateBasedOnInput()
 {
-	static bool F1Pressed = false;
-	static bool F2Pressed = false;
-	static bool F3Pressed = false;
+	static bool SpacePressed = false;
 	static bool WPressed = false;
 	static bool SPressed = false;
 	static bool APressed = false;
@@ -77,36 +89,24 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 		EAE6320_ASSERT( result );
 	}
 
-	// If the user press space, slow the time
-	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
+	// If the user press Space, spawn bullet
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space) && !SpacePressed)
 	{
-		//slow the time
-		SetTimeRate(0.2f);
+		if (currentSpawnGap >= bulletSpawnGap) 
+		{
+			SpawnBullet();
+			laserAudio->PlayIndependent();
+			currentSpawnGap = 0.f;
+		}
+		
+		SpacePressed = true;
+		
+	}
+	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Space) && SpacePressed)
+	{
+		SpacePressed = false;
 	}
 
-	// If the user release space, restore the time
-	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
-	{
-		//restore the time
-		SetTimeRate(1.0f);
-	}
-
-	// If the user press F1, show/hide specific mesh
-	if (UserInput::IsKeyPressed(UserInput::KeyCodes::F1) && !F1Pressed)
-	{
-		isShow = !isShow;
-		F1Pressed = true;
-	}
-
-	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::F1) && F1Pressed)
-	{
-		F1Pressed = false;
-	}
-
-	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::F2) && F2Pressed)
-	{
-		F2Pressed = false;
-	}
 
 	//Actor Movement
 	{
@@ -115,7 +115,6 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.y += 1.5f;
 			WPressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('W') && WPressed)
 		{
@@ -128,7 +127,6 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.y -= 1.5f;
 			SPressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('S') && SPressed)
 		{
@@ -141,7 +139,6 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.x += 1.5f;
 			DPressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('D') && DPressed)
 		{
@@ -154,7 +151,6 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.x -= 1.5f;
 			APressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('A') && APressed)
 		{
@@ -268,9 +264,14 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 
 void eae6320::cSpaceInvader::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
+	currentSpawnGap += i_elapsedSecondCount_sinceLastUpdate;
 	controlledActor->Update(i_elapsedSecondCount_sinceLastUpdate);
 	hitTestActor->Update(i_elapsedSecondCount_sinceLastUpdate);
 	camera->Update(i_elapsedSecondCount_sinceLastUpdate);
+	for (auto bullet : bulletSet) 
+	{
+		bullet->Update(i_elapsedSecondCount_sinceLastUpdate);
+	}
 
 	//Update Collision
 	Collision::CollisionManager::GetCollisionManager()->Update();
@@ -290,24 +291,26 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh02);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh03);
 	Graphics::CreateMesh("data/Meshes/cube.lua", mesh04);
+	Graphics::CreateMesh("data/Meshes/LaserBullet.lua", bulletMesh);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/animatedColor.shader", effect01);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/standard.shader", effect02);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Green.shader", effect03);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Red.shader", effect04);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Oriange.shader", effect05);
 	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/Gray.shader", effect06);
+	Graphics::CreateEffect("data/Shaders/Vertex/standard.shader", "data/Shaders/Fragment/BulletShader.shader", bulletEffect);
 
 	//Player Controller
-	playerController = new eae6320::GameFramework::APlayerController();
+	playerController = new GameFramework::APlayerController();
 
 	//Actor
-	controlledActor = new eae6320::AControlledActor(mesh01, effect02);
-	hitTestActor = new eae6320::AHitTestActor(mesh02, effect03);
-	overlapBeginActor = new eae6320::AOverlapBeginTestActor(mesh03, effect04);
-	overlapEndActor = new eae6320::AOverlapEndTestActor(mesh04, effect05);
+	controlledActor = new AControlledActor(mesh01, effect02);
+	hitTestActor = new AHitTestActor(mesh02, effect03);
+	overlapBeginActor = new AOverlapBeginTestActor(mesh03, effect04);
+	overlapEndActor = new AOverlapEndTestActor(mesh04, effect05);
 
 	//Audio
-	laserAudio = new eae6320::AudioSystem::cAudio();
+	laserAudio = new AudioSystem::cAudio();
 	laserAudio->AudioConstructor("data/Audio/Laser.mp3", "Laser", 500, false);
 	laserAudio->SubmitAudioToBePlayed();
 
@@ -333,7 +336,7 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 	Collision::CollisionManager::GetCollisionManager()->Begin();
 
 	//Camera
-	camera = new eae6320::GameFramework::ACameraActor();
+	camera = new GameFramework::ACameraActor();
 	camera->SetPosition(Math::sVector(0, 0, 15.f));
 
 
@@ -356,17 +359,25 @@ eae6320::cResult eae6320::cSpaceInvader::CleanUp()
 	delete camera;
 	delete playerController;
 	delete laserAudio;
+	for (auto bullet : bulletSet) 
+	{
+		bullet->CleanUp();
+		delete bullet;
+	}
+	bulletSet.clear();
 
 	mesh01->DecrementReferenceCount();
 	mesh02->DecrementReferenceCount();
 	mesh03->DecrementReferenceCount();
 	mesh04->DecrementReferenceCount();
+	bulletMesh->DecrementReferenceCount();
 	effect01->DecrementReferenceCount();
 	effect02->DecrementReferenceCount();
 	effect03->DecrementReferenceCount();
 	effect04->DecrementReferenceCount();
 	effect05->DecrementReferenceCount();
 	effect06->DecrementReferenceCount();
+	bulletEffect->DecrementReferenceCount();
 
 	Collision::CollisionManager::GetCollisionManager()->Destroy();
 	return Results::Success;
@@ -397,4 +408,16 @@ void eae6320::cSpaceInvader::SwitchMesh()
 	{
 		controlledActor->ChangeMesh(mesh01);
 	}
+}
+
+void eae6320::cSpaceInvader::SpawnBullet()
+{
+	ALaserBullet* laserBullet = new ALaserBullet(bulletMesh, bulletEffect);
+	Math::sVector pos = controlledActor->GetPosition();
+	pos.y += 1.f;
+	laserBullet->SetPosition(pos);
+	laserBullet->GetBoxComp()->SetExtend(Math::sVector(0.1f, 0.3f, 0.1f));
+	laserBullet->Begin();
+
+	bulletSet.push_back(laserBullet);
 }

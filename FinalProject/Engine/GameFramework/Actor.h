@@ -15,11 +15,17 @@ namespace eae6320
 			~AActor();
 
 			void SetPosition(Math::sVector i_Position);
+			Math::sVector GetPosition();
 
 			virtual void Begin() {}
 			virtual void Update(const float i_elapsedSecondCount_sinceLastSimulationUpdate) {}
 
+			void Draw();
+			void Draw(const float i_elapsedSecondCount_sinceLastSimulationUpdate);
+
 			virtual void CleanUp();
+
+			bool bIsDestroyed = false;
 		};
 	}
 }

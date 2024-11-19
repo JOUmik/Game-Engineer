@@ -44,6 +44,7 @@ void eae6320::AControlledActor::OnComponentHit(const Collision::BaseCollisionCom
     {
         ChangeEffect(effect);
     }
+    bHitEventGeneratedCurrentFrame = true;
 }
 
 

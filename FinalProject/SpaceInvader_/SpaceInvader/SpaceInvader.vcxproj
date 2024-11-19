@@ -28,20 +28,22 @@
     <ResourceCompile Include="Resource Files\SpaceInvader.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actors\ControlledActor.h" />
     <ClInclude Include="Actors\HitTestActor.h" />
+    <ClInclude Include="Actors\LaserBullet.h" />
     <ClInclude Include="Actors\OverlapBeginTestActor.h" />
     <ClInclude Include="Actors\OverlapEndTestActor.h" />
     <ClInclude Include="cSpaceInvader.h" />
-    <ClInclude Include="ControlledActor.h" />
     <ClInclude Include="Resource Files\Resource.h" />
     <ClInclude Include="Resource Files\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actors\ControlledActor.cpp" />
     <ClCompile Include="Actors\HitTestActor.cpp" />
+    <ClCompile Include="Actors\LaserBullet.cpp" />
     <ClCompile Include="Actors\OverlapBeginTestActor.cpp" />
     <ClCompile Include="Actors\OverlapEndTestActor.cpp" />
     <ClCompile Include="cSpaceInvader.cpp" />
-    <ClCompile Include="ControlledActor.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SpaceInvader", "SpaceInvader", "{06DA57E5-025B-473F-ACC1-A174950122D3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpaceInvader", "SpaceInvader_\SpaceInvader\SpaceInvader.vcxproj", "{4BBB9A30-221D-4740-9D44-9E7248B64285}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MyGame", "MyGame", "{474AE533-1731-4E2A-8016-D652B18E6AC7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyGame", "MyGame_\MyGame\MyGame.vcxproj", "{4B2B87E6-3B57-4921-8CAE-F4A22D139438}"
@@ -97,10 +101,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioBuilder", "Tools\AudioBuilder\AudioBuilder.vcxproj", "{7C12C306-1A4C-4F37-A3A2-392030CE0DCE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio", "Engine\Audio\Audio.vcxproj", "{0537D0F6-B1B2-485D-AFF0-3FA2CE88FDE7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SpaceInvader", "SpaceInvader", "{06DA57E5-025B-473F-ACC1-A174950122D3}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpaceInvader", "SpaceInvader_\SpaceInvader\SpaceInvader.vcxproj", "{4BBB9A30-221D-4740-9D44-9E7248B64285}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BuildSpaceInvaderAssets", "SpaceInvader_\BuildSpaceInvaderAssets\BuildSpaceInvaderAssets.vcxproj", "{E096749F-3B53-4A8F-8000-9D452886612E}"
 	ProjectSection(ProjectDependencies) = postProject

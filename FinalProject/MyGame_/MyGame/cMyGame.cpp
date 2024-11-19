@@ -20,7 +20,6 @@
 #include <Engine/Math/cMatrix_transformation.h>
 #include <Engine/Math/Functions.h>
 #include <Engine/Collision/CollisionManager.h>
-#include <Engine/Audio/cAudioSystem.h>
 
 // Inherited Implementation
 //=========================
@@ -115,7 +114,6 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.y += 1.5f;
 			WPressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('W') && WPressed)
 		{
@@ -128,7 +126,6 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.y -= 1.5f;
 			SPressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('S') && SPressed)
 		{
@@ -141,7 +138,6 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.x += 1.5f;
 			DPressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('D') && DPressed)
 		{
@@ -154,7 +150,6 @@ void eae6320::cMyGame::UpdateBasedOnInput()
 		{
 			controlledActor->rigidBodyState->velocity.x -= 1.5f;
 			APressed = true;
-			laserAudio->PlayIndependent();
 		}
 		if (!UserInput::IsKeyPressed('A') && APressed)
 		{
@@ -306,11 +301,6 @@ eae6320::cResult eae6320::cMyGame::Initialize()
 	overlapBeginActor = new eae6320::AOverlapBeginTestActor(mesh03, effect04);
 	overlapEndActor = new eae6320::AOverlapEndTestActor(mesh04, effect05);
 
-	//Audio
-	laserAudio = new eae6320::AudioSystem::cAudio();
-	laserAudio->AudioConstructor("data/Audio/Laser.mp3", "Laser", 500, false);
-	laserAudio->SubmitAudioToBePlayed();
-
 	hitTestActor->SetPosition(Math::sVector(-3.f, 3.f, -0.1f));
 	overlapBeginActor->SetPosition(Math::sVector(0.f, 3.f, -0.1f));
 	overlapEndActor->SetPosition(Math::sVector(3.f, 3.f, -0.1f));
@@ -355,7 +345,6 @@ eae6320::cResult eae6320::cMyGame::CleanUp()
 	delete overlapEndActor;
 	delete camera;
 	delete playerController;
-	delete laserAudio;
 
 	mesh01->DecrementReferenceCount();
 	mesh02->DecrementReferenceCount();
