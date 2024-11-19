@@ -30,10 +30,8 @@
   <ItemGroup>
     <ClInclude Include="Actors\ControlledActor.h" />
     <ClInclude Include="Actors\Enemy.h" />
-    <ClInclude Include="Actors\HitTestActor.h" />
     <ClInclude Include="Actors\LaserBullet.h" />
-    <ClInclude Include="Actors\OverlapBeginTestActor.h" />
-    <ClInclude Include="Actors\OverlapEndTestActor.h" />
+    <ClInclude Include="Actors\Block.h" />
     <ClInclude Include="cSpaceInvader.h" />
     <ClInclude Include="Resource Files\Resource.h" />
     <ClInclude Include="Resource Files\targetver.h" />
@@ -41,10 +39,8 @@
   <ItemGroup>
     <ClCompile Include="Actors\ControlledActor.cpp" />
     <ClCompile Include="Actors\Enemy.cpp" />
-    <ClCompile Include="Actors\HitTestActor.cpp" />
     <ClCompile Include="Actors\LaserBullet.cpp" />
-    <ClCompile Include="Actors\OverlapBeginTestActor.cpp" />
-    <ClCompile Include="Actors\OverlapEndTestActor.cpp" />
+    <ClCompile Include="Actors\Block.cpp" />
     <ClCompile Include="cSpaceInvader.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
   </ItemGroup>

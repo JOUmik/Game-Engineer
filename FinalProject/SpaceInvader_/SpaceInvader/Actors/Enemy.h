@@ -3,13 +3,13 @@
 #include <Engine/GameFramework/Actor.h>
 #include <Engine/Collision/BoxCollisionComponent.h>
 #include <Engine/Graphics/Graphics.h>
-#include <Engine/Audio/cAudioSystem.h>
 
 namespace eae6320
 {
 	class AEnemy : public GameFramework::AActor
 	{
 	public:
+		Delegate<> Destoryed;
 		AEnemy(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect);
 		~AEnemy();
 
@@ -32,6 +32,5 @@ namespace eae6320
 
 	private:
 		Collision::BoxCollisionComponent* boxComp;
-		AudioSystem::cAudio* ExplosionAudio;
 	};
 }

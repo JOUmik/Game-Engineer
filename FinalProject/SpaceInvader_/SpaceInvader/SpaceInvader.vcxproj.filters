@@ -35,13 +35,7 @@
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="cSpaceInvader.h" />
-    <ClInclude Include="Actors\HitTestActor.h">
-      <Filter>Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Actors\OverlapBeginTestActor.h">
-      <Filter>Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Actors\OverlapEndTestActor.h">
+    <ClInclude Include="Actors\Block.h">
       <Filter>Actors</Filter>
     </ClInclude>
     <ClInclude Include="Actors\LaserBullet.h">
@@ -57,13 +51,7 @@
   <ItemGroup>
     <ClCompile Include="cSpaceInvader.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
-    <ClCompile Include="Actors\HitTestActor.cpp">
-      <Filter>Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Actors\OverlapBeginTestActor.cpp">
-      <Filter>Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Actors\OverlapEndTestActor.cpp">
+    <ClCompile Include="Actors\Block.cpp">
       <Filter>Actors</Filter>
     </ClCompile>
     <ClCompile Include="Actors\ControlledActor.cpp">

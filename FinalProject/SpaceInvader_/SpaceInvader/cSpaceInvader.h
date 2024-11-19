@@ -51,9 +51,6 @@ namespace eae6320
 	}
 
 	class AControlledActor;
-	class AHitTestActor;
-	class AOverlapBeginTestActor;
-	class AOverlapEndTestActor;
 	class ALaserBullet;
 	class AEnemy;
 	class cSpaceInvader final : public Application::iApplication
@@ -73,6 +70,7 @@ namespace eae6320
 		Graphics::Effect* effect06 = nullptr;
 		Graphics::Effect* bulletEffect = nullptr;
 		AudioSystem::cAudio* laserAudio = nullptr;
+		AudioSystem::cAudio* ExplosionAudio = nullptr;
 
 		//Player Controller
 		eae6320::GameFramework::APlayerController* playerController = nullptr;
@@ -153,6 +151,7 @@ namespace eae6320
 		//Game Play
 		void SpawnBullet();
 		void CreateEnemies();
+		void EnemyDestroyed();
 
 		std::vector<ALaserBullet*> bulletSet;
 		float bulletSpawnGap = 0.6f;

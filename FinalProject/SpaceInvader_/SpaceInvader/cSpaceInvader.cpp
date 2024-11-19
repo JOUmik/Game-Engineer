@@ -3,8 +3,6 @@
 
 #include "cSpaceInvader.h"
 #include "Actors/Enemy.h"
-#include "Actors/OverlapBeginTestActor.h"
-#include "Actors/OverlapEndTestActor.h"
 #include "Actors/ControlledActor.h"
 #include "Actors/LaserBullet.h"
 
@@ -279,8 +277,11 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 
 	//Audio
 	laserAudio = new AudioSystem::cAudio();
-	laserAudio->AudioConstructor("data/Audio/Laser.mp3", "Laser", 500, false);
+	laserAudio->AudioConstructor("data/Audio/Laser.mp3", "Laser", 400, false);
 	laserAudio->SubmitAudioToBePlayed();
+	ExplosionAudio = new AudioSystem::cAudio();
+	ExplosionAudio->AudioConstructor("data/Audio/Explosion.mp3", "Explosion", 2400, false);
+	ExplosionAudio->SubmitAudioToBePlayed();
 
 	controlledActor->SetPosition(Math::sVector(0.f, -4.f, 0.f));
 
@@ -386,9 +387,150 @@ void eae6320::cSpaceInvader::CreateEnemies()
 	//01
 	{
 		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-4.5f, 3.f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//02
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
 		enemy->SetPosition(Math::sVector(-3.f, 3.f, -0.1f));
 		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
 		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
 		enemySet.push_back(enemy);
 	}
+	//03
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-1.5f, 3.f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//04
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(1.5f, 3.f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//05
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(3.f, 3.f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//06
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(4.5f, 3.f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//07
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-4.5f, 4.6f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//08
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-3.f, 4.6f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//09
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-1.5f, 4.6f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//10
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(1.5f, 4.6f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//11
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(3.f, 4.6f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//12
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(4.5f, 4.6f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//13
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-3.f, 1.4f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//14
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(-1.5f, 1.4f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//15
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(1.5f, 1.4f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+	//16
+	{
+		AEnemy* enemy = new AEnemy(mesh02, effect06);
+		enemy->SetPosition(Math::sVector(3.f, 1.4f, -0.1f));
+		enemy->GetBoxComp()->SetExtend(Math::sVector(0.3f, 0.4f, 0.2f));
+		enemy->Begin();
+		enemy->Destoryed.Add(this, &cSpaceInvader::EnemyDestroyed);
+		enemySet.push_back(enemy);
+	}
+}
+
+void eae6320::cSpaceInvader::EnemyDestroyed()
+{
+	ExplosionAudio->PlayIndependent();
 }

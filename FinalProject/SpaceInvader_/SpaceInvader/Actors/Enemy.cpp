@@ -11,11 +11,6 @@ eae6320::AEnemy::AEnemy(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effe
 
     Collision::CollisionManager::GetCollisionManager()->AddCollisionComponent(*boxComp);
 
-    //Audio
-    ExplosionAudio = new AudioSystem::cAudio();
-    ExplosionAudio->AudioConstructor("data/Audio/Explosion.mp3", "Explosion", 2000, false);
-    ExplosionAudio->SubmitAudioToBePlayed();
-
     //Bind Event
     boxComp->UpdatePositionAfterCollision.Add(this, &AEnemy::UpdatePosition);
     boxComp->OnComponentHit.Add(this, &AEnemy::OnComponentHit);
@@ -46,7 +41,7 @@ void eae6320::AEnemy::UpdatePosition(const Math::sVector& safePosition)
 
 void eae6320::AEnemy::OnComponentHit(const Collision::BaseCollisionComponent&)
 {
-    ExplosionAudio->PlayIndependent();
+    Destoryed.Broadcast();
     HideInTheGame();
 }
 
@@ -63,8 +58,6 @@ void eae6320::AEnemy::CleanUp()
     Collision::CollisionManager::GetCollisionManager()->RemoveCollisionComponent(*boxComp);
     delete boxComp;
     boxComp = nullptr;
-    delete ExplosionAudio;
-    ExplosionAudio = nullptr;
 }
 
 void eae6320::AEnemy::HideInTheGame()

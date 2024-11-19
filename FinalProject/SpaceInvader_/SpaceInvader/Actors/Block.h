@@ -1,23 +1,20 @@
 #pragma once
-
 #include <Engine/GameFramework/Actor.h>
 #include <Engine/Collision/BoxCollisionComponent.h>
 #include <Engine/Graphics/Graphics.h>
 
 namespace eae6320
 {
-	class AHitTestActor : public GameFramework::AActor
+	class ABlock : public GameFramework::AActor
 	{
 	public:
-		AHitTestActor(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect);
-		~AHitTestActor();
+		ABlock(eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::Effect* i_effect);
+		~ABlock();
 
 		virtual void Begin();
 		virtual void Update(const float i_elapsedSecondCount_sinceLastSimulationUpdate);
 
-		void UpdatePosition(const Math::sVector& safePosition);
-
-		void OnComponentHit(const Collision::BaseCollisionComponent&);
+		void OnComponentBeginOverlap(const Collision::BaseCollisionComponent&);
 
 		inline Collision::BoxCollisionComponent* GetBoxComp() { return boxComp; }
 
