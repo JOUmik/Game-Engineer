@@ -35,10 +35,7 @@ void eae6320::cSpaceInvader::SubmitDataToBeRendered(const float i_elapsedSecondC
 	//float r = (std::cos(9.0f * simulateTime) * 0.1f) + 0.15f;
 	//float g = (std::sin(2.0f * simulateTime) * 0.1f) + 0.15f;
 	//float b = (-std::cos(5.0f * simulateTime) * 0.2f) + 0.25f;
-	float r = 0.6f;
-	float g = 0.8f;
-	float b = 1.f;
-	Graphics::UpdateBackgroundColor(r, g, b, backgroundColor.a);
+	Graphics::UpdateBackgroundColor(0.6f, 0.8f, 1.f, 1.f);
 	
 	// Player Controller send the binded camera date to graphics
 	{
@@ -107,6 +104,7 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 	static bool SPressed = false;
 	static bool APressed = false;
 	static bool DPressed = false;
+	static bool RPressed = false;
 	static bool UpArrowPressed = false;
 	static bool DownArrowPressed = false;
 	static bool LeftArrowPressed = false;
@@ -135,6 +133,19 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 	if (!UserInput::IsKeyPressed(UserInput::KeyCodes::Space) && SpacePressed)
 	{
 		SpacePressed = false;
+	}
+
+	// If the user press R, reset game
+	if (UserInput::IsKeyPressed('R') && !RPressed)
+	{
+		//Reset();
+
+		RPressed = true;
+
+	}
+	if (!UserInput::IsKeyPressed('R') && RPressed)
+	{
+		RPressed = false;
 	}
 
 
@@ -243,9 +254,17 @@ void eae6320::cSpaceInvader::UpdateBasedOnInput()
 
 void eae6320::cSpaceInvader::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
+	if (GameOver) return;
+	if (bFirstFrame) 
+	{
+		//backgroundAudio->SubmitAudioToBePlayed();
+		//backgroundAudio->Play();
+		//backgroundAudio->PlayIndependent();
+		bFirstFrame = false;
+	}
+
 	EnemyMovement(i_elapsedSecondCount_sinceLastUpdate);
 
-	if (GameOver) return;
 	currentSpawnGap += i_elapsedSecondCount_sinceLastUpdate;
 	controlledActor->Update(i_elapsedSecondCount_sinceLastUpdate);
 	camera->Update(i_elapsedSecondCount_sinceLastUpdate);
@@ -260,6 +279,8 @@ void eae6320::cSpaceInvader::UpdateSimulationBasedOnTime(const float i_elapsedSe
 	}
 	if (allEnemyDied) 
 	{
+		winAudio->SubmitAudioToBePlayed();
+		winAudio->Play();
 		gameOverBlock->ChangeEffect(greenEffect);
 		GameOver = true;
 	}
@@ -280,10 +301,6 @@ void eae6320::cSpaceInvader::UpdateSimulationBasedOnTime(const float i_elapsedSe
 
 eae6320::cResult eae6320::cSpaceInvader::Initialize()
 {
-	//background color init
-	backgroundColor.r = 0.6f;
-	backgroundColor.g = 0.1f;
-	backgroundColor.b = 0.7f;
 	//Graphics::CreateMesh(vertexData01, indexData01, 7, 9, mesh01);
 	Graphics::CreateMesh("data/Meshes/Player.lua", playerMesh);
 	Graphics::CreateMesh("data/Meshes/Enemy.lua", enemyMesh);
@@ -308,11 +325,19 @@ eae6320::cResult eae6320::cSpaceInvader::Initialize()
 
 	//Audio
 	laserAudio = new AudioSystem::cAudio();
-	laserAudio->AudioConstructor("data/Audio/Laser.mp3", "Laser", 400, false);
+	laserAudio->AudioConstructor("data/Audio/Laser.mp3", "Laser", 320, false);
 	laserAudio->SubmitAudioToBePlayed();
 	ExplosionAudio = new AudioSystem::cAudio();
-	ExplosionAudio->AudioConstructor("data/Audio/Explosion.mp3", "Explosion", 2400, false);
+	ExplosionAudio->AudioConstructor("data/Audio/Explosion.mp3", "Explosion", 3000, false);
 	ExplosionAudio->SubmitAudioToBePlayed();
+	winAudio = new AudioSystem::cAudio();
+	winAudio->AudioConstructor("data/Audio/Win.mp3", "Win", 1200, false);
+	failAudio = new AudioSystem::cAudio();
+	failAudio->AudioConstructor("data/Audio/Fail.mp3", "Fail", 800, false);
+	backgroundAudio = new AudioSystem::cAudio();
+	backgroundAudio->AudioConstructor("data/Audio/Background.mp3", "Background", 240, true);
+	backgroundAudio->SubmitAudioToBePlayed();
+	backgroundAudio->Play();
 
 	controlledActor->SetPosition(Math::sVector(0.f, -4.f, 0.f));
 	leftBlock->SetPosition(Math::sVector(-6.3f, 7.f, 0.f));
@@ -363,6 +388,13 @@ eae6320::cResult eae6320::cSpaceInvader::CleanUp()
 	delete leftBlock;
 	delete rightBlock;
 	delete gameOverBlock;
+	controlledActor = nullptr;
+	camera = nullptr;
+	playerController = nullptr;
+	laserAudio = nullptr;
+	leftBlock = nullptr;
+	rightBlock = nullptr;
+	gameOverBlock = nullptr;
 	for (auto enemy : enemySet) 
 	{
 		enemy->CleanUp();
@@ -391,30 +423,10 @@ eae6320::cResult eae6320::cSpaceInvader::CleanUp()
 }
 
 
-//input interaction
-//-----------------
-void eae6320::cSpaceInvader::SwitchShader()
+void eae6320::cSpaceInvader::Reset()
 {
-	if (!isDiffShader) 
-	{
-		controlledActor->ChangeEffect(playerEffect);
-	}
-	else 
-	{
-		controlledActor->ChangeEffect(darkEffect);
-	}
-}
-
-void eae6320::cSpaceInvader::SwitchMesh()
-{
-	if (isCubeMesh) 
-	{
-		controlledActor->ChangeMesh(blockMesh);
-	}
-	else 
-	{
-		controlledActor->ChangeMesh(playerMesh);
-	}
+	CleanUp();
+	Initialize();
 }
 
 void eae6320::cSpaceInvader::EnemyMovement(const float i_elapsedSecondCount_sinceLastUpdate)
@@ -633,5 +645,7 @@ void eae6320::cSpaceInvader::EnemyOverlapWithBlock()
 
 void eae6320::cSpaceInvader::EnemyOverlapWithGameOverBlock()
 {
+	failAudio->SubmitAudioToBePlayed();
+	failAudio->Play();
 	GameOver = true;
 }

@@ -36,13 +36,6 @@ namespace eae6320
 	{
 		class cAudio;
 	}
-	struct sColor
-	{
-		float r = 0.f;
-		float g = 0.f;
-		float b = 0.f;
-		float a = 1.f;
-	};
 
 	namespace Graphics 
 	{
@@ -58,7 +51,6 @@ namespace eae6320
 	class cSpaceInvader final : public Application::iApplication
 	{
 	public:
-		sColor backgroundColor;
 		Graphics::Mesh* playerMesh = nullptr;
 		Graphics::Mesh* enemyMesh = nullptr;
 		Graphics::Mesh* blockMesh = nullptr;
@@ -71,6 +63,9 @@ namespace eae6320
 		Graphics::Effect* bulletEffect = nullptr;
 		AudioSystem::cAudio* laserAudio = nullptr;
 		AudioSystem::cAudio* ExplosionAudio = nullptr;
+		AudioSystem::cAudio* winAudio = nullptr;
+		AudioSystem::cAudio* failAudio = nullptr;
+		AudioSystem::cAudio* backgroundAudio = nullptr;
 
 		//Player Controller
 		GameFramework::APlayerController* playerController = nullptr;
@@ -83,14 +78,6 @@ namespace eae6320
 
 		//Cameras
 		GameFramework::ACameraActor* camera = nullptr;
-
-		//Input Control
-		bool isShow = true;
-		bool isDiffShader = true;
-		bool isCubeMesh = false;
-
-		// Inherited Implementation
-		//=========================
 
 	private:
 
@@ -147,11 +134,8 @@ namespace eae6320
 		cResult Initialize() final;
 		cResult CleanUp() final;
 
-		//input interaction
-		void SwitchShader();
-		void SwitchMesh();
-
 		//Game Play
+		void Reset();
 		void EnemyMovement(const float i_elapsedSecondCount_sinceLastUpdate);
 		void SpawnBullet();
 		void CreateEnemies();
@@ -165,6 +149,7 @@ namespace eae6320
 
 		std::vector<AEnemy*> enemySet;
 
+		bool bFirstFrame = true;
 		bool EnemyHasOverlapedWithBlock = false;
 		bool bEnemyMoveForward = false;
 		float currentMoveForwardTime = 0.f;

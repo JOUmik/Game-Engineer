@@ -74,6 +74,8 @@ void eae6320::AudioSystem::cAudio::Play()
 			Logging::OutputMessage("Play audio failed : %s:", errorMessage);
 		}
 	}
+
+	SetVolume(volume);
 }
 
 void eae6320::AudioSystem::cAudio::PlayIndependent()

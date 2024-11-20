@@ -32,5 +32,8 @@ return
 	audio = {
 		{ path = "Audio/Laser.mp3"},
 		{ path = "Audio/Explosion.mp3"},
+		{ path = "Audio/Win.mp3"},
+		{ path = "Audio/Fail.mp3"},
+		{ path = "Audio/Background.mp3"},
 	}
 }
